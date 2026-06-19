@@ -533,7 +533,7 @@ function switchArchiveTab(tabName) {
   document.getElementById('archive-sidebar-search').value = '';
 
   // Render contextual filters in the sidebar
-  renderSidebarFilters();
+  initArchiveFilters();
   
   // Render active dataset
   filterArchiveData();
@@ -545,7 +545,7 @@ function switchArchiveTab(tabName) {
 }
 
 function initArchiveFilters() {
-  const widget = document.getElementById('archive-filters-widget');
+  const widget = document.getElementById('sidebar-filters-widget');
   widget.innerHTML = '';
 
   let title = 'Categories';
@@ -1092,20 +1092,22 @@ function focusSkill(toolName) {
     skillSection.scrollIntoView({ behavior: 'smooth' });
     
     setTimeout(() => {
-      const rows = document.querySelectorAll('.skill-row');
-      rows.forEach(row => {
-        const nameText = row.getAttribute('data-name');
+      const tags = document.querySelectorAll('.skill-tag');
+      tags.forEach(tag => {
+        const nameText = tag.getAttribute('data-name');
         if (nameText && nameText.toLowerCase().includes(toolName.toLowerCase())) {
-          row.style.background = 'rgba(79, 70, 229, 0.15)';
-          row.style.borderColor = 'var(--accent-primary)';
-          row.style.transform = 'scale(1.03)';
-          row.style.transition = 'all 0.5s ease';
+          tag.style.background = 'rgba(6, 182, 212, 0.2)';
+          tag.style.borderColor = 'var(--accent-primary)';
+          tag.style.transform = 'translateY(-4px) scale(1.05)';
+          tag.style.boxShadow = '0 0 15px rgba(6, 182, 212, 0.4)';
+          tag.style.transition = 'all 0.5s ease';
           
           setTimeout(() => {
-            row.style.background = '';
-            row.style.borderColor = '';
-            row.style.transform = '';
-          }, 2000);
+            tag.style.background = '';
+            tag.style.borderColor = '';
+            tag.style.transform = '';
+            tag.style.boxShadow = '';
+          }, 2500);
         }
       });
     }, 800);
