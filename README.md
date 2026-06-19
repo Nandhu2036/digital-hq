@@ -21,7 +21,7 @@ d:/digital-hq/
     ├── profile/          # Drop your profile photo here as portrait.jpg
     ├── projects/         # Technical spec presentations & screenshots
     ├── certificates/     # PDF files of your qualifications
-    ├── cad/              # CAD renders & topological simulations
+    ├── cad-models/       # CAD renders & topological simulations
     ├── documents/        # PDF reports & downloadable resumes
     ├── gallery/          # Masonry team and workshop photos
     └── internships/      # Internship certificates and reports

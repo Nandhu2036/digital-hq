@@ -182,13 +182,10 @@ function initSkills() {
     cat.list.forEach(skill => {
       const badgeHtml = skill.badge ? `<span class="skill-badge">${skill.badge}</span>` : '';
       listHtml += `
-        <div class="skill-row" data-name="${skill.name}" style="cursor:help;">
-          <div class="skill-info">
-            <span class="skill-name">${skill.name} ${badgeHtml}</span>
-          </div>
-          <div class="skill-track">
-            <div class="skill-fill" style="width: ${skill.rating}%;"></div>
-          </div>
+        <div class="skill-tag" data-name="${skill.name}">
+          <span class="skill-dot"></span>
+          <span class="skill-name">${skill.name}</span>
+          ${badgeHtml}
         </div>
       `;
     });
@@ -316,12 +313,24 @@ function initInternships() {
     const reportBtn = intern.document ? `
       <a href="${intern.document}" target="_blank" class="btn-primary" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px;">
         <span class="material-symbols-outlined" style="font-size:16px;">description</span> Technical Report
-      </a>` : '';
+      </a>` : `
+      <div style="display:inline-block; position:relative; margin-right: 8px;">
+        <button onclick="triggerInternshipUpload(this, '${intern.company.replace(/'/g, "\\'")}', 'report')" class="btn-primary upload-fallback-btn" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); color: var(--text-secondary);">
+          <span class="material-symbols-outlined" style="font-size:16px;">upload_file</span> Add Report
+        </button>
+        <input type="file" accept=".pdf,.doc,.docx" style="display:none;" onchange="handleInternshipUpload(event, '${intern.company.replace(/'/g, "\\'")}', 'report', this)">
+      </div>`;
 
     const certBtn = intern.certificate ? `
-      <button onclick="openCertificateViewer('${intern.certificate}', '${intern.company} Internship Cert')" class="btn-secondary" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px;">
+      <button onclick="openCertificateViewer('${intern.certificate}', '${intern.company.replace(/'/g, "\\'")}', 'Internship Cert')" class="btn-secondary" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px;">
         <span class="material-symbols-outlined" style="font-size:16px;">verified</span> Internship Certificate
-      </button>` : '';
+      </button>` : `
+      <div style="display:inline-block; position:relative;">
+        <button onclick="triggerInternshipUpload(this, '${intern.company.replace(/'/g, "\\'")}', 'certificate')" class="btn-secondary upload-fallback-btn" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); color: var(--text-secondary);">
+          <span class="material-symbols-outlined" style="font-size:16px;">upload_file</span> Add Certificate
+        </button>
+        <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" style="display:none;" onchange="handleInternshipUpload(event, '${intern.company.replace(/'/g, "\\'")}', 'certificate', this)">
+      </div>`;
 
     container.innerHTML += `
       <div class="internship-card">
@@ -535,18 +544,53 @@ function switchArchiveTab(tabName) {
   }
 }
 
-function renderSidebarFilters() {
-  const widget = document.getElementById('sidebar-filters-widget');
+function initArchiveFilters() {
+  const widget = document.getElementById('archive-filters-widget');
   widget.innerHTML = '';
 
   let title = 'Categories';
   let filters = [];
 
   if (activeArchiveTab === 'designs') {
-    title = 'Software Tools';
-    const softwares = new Set();
-    PROFILE_DATA.cadVault.forEach(c => softwares.add(c.software));
-    filters = Array.from(softwares);
+    title = 'CAD Vault Subcategories';
+    let filtersHtml = `<div class="sidebar-filter-item ${selectedFilter === 'all' ? 'active' : ''}" data-filter="all">
+      <span>Show All Designs</span>
+    </div>`;
+
+    const designGroups = {
+      "Practice Parts": ["Exercises 1-28", "Daily Challenges"],
+      "Mechanical Assemblies": ["Engines", "Mechanisms", "Heavy Equipment"],
+      "Projects": ["TPMS", "Research Designs", "Product Concepts"],
+      "Others": ["Scans", "Drafts", "Experimental Models"]
+    };
+
+    for (const [groupName, subCats] of Object.entries(designGroups)) {
+      filtersHtml += `<span class="sidebar-filter-group-header">${groupName}</span>`;
+      subCats.forEach(sub => {
+        filtersHtml += `
+          <div class="sidebar-filter-item sub-item ${selectedFilter === sub ? 'active' : ''}" data-filter="${sub}">
+            <span>${sub}</span>
+          </div>
+        `;
+      });
+    }
+
+    widget.innerHTML = `
+      <h4>${title}</h4>
+      <div class="sidebar-filter-list">
+        ${filtersHtml}
+      </div>
+    `;
+
+    widget.querySelectorAll('.sidebar-filter-item').forEach(item => {
+      item.addEventListener('click', () => {
+        widget.querySelectorAll('.sidebar-filter-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        selectedFilter = item.getAttribute('data-filter');
+        filterArchiveData();
+      });
+    });
+    return;
   } else if (activeArchiveTab === 'certificates') {
     title = 'Categories';
     const categories = new Set();
@@ -604,7 +648,7 @@ function filterArchiveData() {
   if (activeArchiveTab === 'designs') {
     const filtered = PROFILE_DATA.cadVault.filter(cad => {
       const matchesSearch = cad.title.toLowerCase().includes(query) || cad.description.toLowerCase().includes(query) || cad.tags.some(t => t.toLowerCase().includes(query));
-      const matchesFilter = selectedFilter === 'all' || cad.software === selectedFilter;
+      const matchesFilter = selectedFilter === 'all' || cad.subCategory === selectedFilter || cad.category === selectedFilter;
       return matchesSearch && matchesFilter;
     });
     renderArchiveDesigns(filtered);
@@ -667,17 +711,22 @@ function renderArchiveDesigns(items) {
         <span onclick="triggerCrossLink('${cad.relatedContent.link}')" class="crosslink-tag">${cad.relatedContent.text}</span>
       </div>` : '';
 
-    const isCadSource = isCADFile(cad.filePath);
-    let previewImgSrc = cad.filePath;
+    const downloadBtnHtml = cad.cadSource ? `
+      <div class="meta-row" style="margin-top: 6px;">
+        <span>Source CAD Model:</span>
+        <a href="${cad.cadSource}" download class="crosslink-tag" style="display:inline-flex; align-items:center; gap:4px; color:var(--accent-primary); border-color:var(--accent-primary); cursor:pointer; text-decoration:none;">
+          <span class="material-symbols-outlined" style="font-size:12px;">download</span> Download ${cad.cadSource.split('.').pop().toUpperCase()}
+        </a>
+      </div>` : '';
+
+    let previewImgSrc = cad.filePath || 'assets/projects/fig-2.png';
     let fallbackImgSrc = 'assets/projects/ecofloat_boat.png';
     let actionIcon = 'zoom_in';
     let labelHtml = '';
 
-    if (isCadSource) {
-      previewImgSrc = 'assets/projects/fig-2.png'; // Use blueprint as graphic
-      const ext = cad.filePath.split('.').pop().toUpperCase();
+    if (cad.cadSource) {
+      const ext = cad.cadSource.split('.').pop().toUpperCase();
       labelHtml = `<div class="vault-source-badge">${ext} MODEL</div>`;
-      actionIcon = 'download';
     }
 
     grid.innerHTML += `
@@ -703,6 +752,7 @@ function renderArchiveDesigns(items) {
               <span class="text-white font-bold" onclick="focusSkill('${cad.software}')" style="cursor:pointer; text-decoration:underline;">${cad.software}</span>
             </div>
             ${crossLinkHtml}
+            ${downloadBtnHtml}
             <div class="proj-modal-tech" style="margin-bottom:0; margin-top:6px;">${tagsHtml}</div>
           </div>
         </div>
@@ -1567,3 +1617,37 @@ function highlightSearchItem(items) {
     }
   });
 }
+
+// Fallback upload handlers for missing internship documents
+window.triggerInternshipUpload = function(btn, company, type) {
+  const input = btn.nextElementSibling;
+  if (input) {
+    input.click();
+  }
+};
+
+window.handleInternshipUpload = function(event, company, type, input) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const fileUrl = URL.createObjectURL(file);
+  const btn = input.previousElementSibling;
+
+  if (btn) {
+    btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">visibility</span> View ${type === 'report' ? 'Report' : 'Certificate'}`;
+    btn.style.background = type === 'report' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.1)';
+    btn.style.borderColor = type === 'report' ? 'var(--accent-primary)' : 'var(--border-color)';
+    btn.style.color = 'var(--text-primary)';
+    btn.style.borderStyle = 'solid';
+    
+    btn.onclick = function() {
+      if (type === 'report') {
+        window.open(fileUrl, '_blank');
+      } else {
+        openCertificateViewer(fileUrl, `${company} Internship Cert`);
+      }
+    };
+
+    alert(`File "${file.name}" uploaded successfully!\n\nDISCLAIMER: This uploaded file is temporarily stored in your browser session. To permanently deploy this report/certificate, add the file into the assets/ folder of your workspace and specify its relative path in data.js.`);
+  }
+};

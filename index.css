@@ -1245,58 +1245,53 @@ img, video {
 
 .skills-list {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.skill-row {
+.skill-tag {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 4px 0;
-}
-
-.skill-info {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+.skill-tag:hover {
+  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(14, 165, 233, 0.3);
+  color: var(--text-primary);
+  transform: translateY(-1.5px);
+}
+
+.skill-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px var(--accent-primary);
 }
 
 .skill-name {
-  font-size: 0.88rem;
   font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.skill-pct {
-  font-family: var(--font-subheadings);
-  font-size: 0.78rem;
-  color: var(--text-primary);
-}
-
-.skill-track {
-  width: 100%;
-  height: 4px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.skill-fill {
-  height: 100%;
-  background: var(--accent-primary);
-  border-radius: 2px;
 }
 
 .skill-badge {
-  font-size: 0.65rem;
-  font-family: var(--font-subheadings);
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border-color);
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 6px;
-  color: var(--accent-secondary);
+  font-size: 0.62rem;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: 4px;
+  color: var(--accent-primary);
 }
 
 /* Internship Experience Layout */
@@ -1753,6 +1748,26 @@ img, video {
   background: rgba(37,99,235,0.1);
   color: var(--text-primary);
   font-weight: 500;
+}
+
+.sidebar-filter-group-header {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 8px 12px 4px 12px;
+  margin-top: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.sidebar-filter-group-header:first-of-type {
+  margin-top: 0;
+}
+
+.sidebar-filter-item.sub-item {
+  padding-left: 24px;
+  font-size: 0.76rem;
 }
 
 .info-widget p {
