@@ -54,7 +54,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+html, body {
   overflow-x: hidden;
   background-color: var(--bg-primary);
 }
@@ -1045,6 +1045,7 @@ img, video {
 .journey-timeline-side {
   grid-column: span 7;
   position: relative;
+  overflow: hidden;
 }
 
 .timeline-wrapper {
