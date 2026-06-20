@@ -63,34 +63,105 @@
 
     /* Header Section */
     .header {
-      text-align: center;
-      margin-bottom: 3mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 3.5mm;
+      margin-bottom: 4mm;
       flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      max-width: 110mm;
+      margin-top: 1mm;
     }
 
     .name {
       font-family: 'Outfit', sans-serif;
-      font-size: 18pt;
+      font-size: 19pt;
       font-weight: 800;
       color: var(--primary-dark);
       margin: 0 0 1.2mm 0;
       letter-spacing: -0.5px;
+      line-height: 1.1;
     }
 
-    .contact-bar {
+    .title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 9.5pt;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0.2px;
+      line-height: 1.2;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: flex-start;
+      gap: 4mm;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.8mm;
       font-size: 7.5pt;
-      color: var(--text-muted);
       font-weight: 500;
+      margin-top: 1.5mm;
     }
 
-    .contact-bar a {
+    .contact-item {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .contact-item a {
       color: var(--text-muted);
       text-decoration: none;
       transition: color 0.15s;
     }
 
-    .contact-bar a:hover {
+    .contact-item a:hover {
       color: var(--primary);
+    }
+
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid var(--border-color);
+      padding-left: 3.5mm;
+    }
+
+    .qr-container img {
+      display: block;
+      margin-bottom: 1.2mm;
+      border: 1px solid var(--border-color);
+      padding: 1px;
+      background: #ffffff;
+    }
+
+    .qr-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 7pt;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: 0.2px;
+    }
+
+    .qr-sublabel {
+      font-size: 5.5pt;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: none;
     }
 
     /* General Section Layout */
@@ -377,16 +448,28 @@
   <!-- ==================== PAGE 1 ==================== -->
   <div class="page">
     
-    <!-- Single-line Professional Header -->
+    <!-- Restructured Professional Header -->
     <div class="header">
-      <h1 class="name">NANDHAKUMAR G</h1>
-      <div class="contact-bar">
-        <span>+91 93441-61321</span> &bull;
-        <a href="mailto:nandhu2036os@gmail.com">nandhu2036os@gmail.com</a> &bull;
-        <a href="https://www.linkedin.com/in/nandha06" target="_blank">linkedin.com/in/nandha06</a> &bull;
-        <a href="https://github.com/Nandhu2036" target="_blank">github.com/Nandhu2036</a> &bull;
-        <a href="https://nandhu2036.github.io/digital-hq/" target="_blank">nandhu2036.github.io/digital-hq</a> &bull;
-        <span>Chennai, India</span>
+      <div class="header-left">
+        <h1 class="name">NANDHAKUMAR G</h1>
+        <h2 class="title">Mechanical Engineering | Digital Workflows &amp; Operations</h2>
+      </div>
+      <div class="header-right">
+        <div class="contact-details">
+          <div class="contact-item">+91 93441-61321</div>
+          <div class="contact-item"><a href="mailto:nandhu2036os@gmail.com">nandhu2036os@gmail.com</a></div>
+          <div class="contact-item"><a href="https://www.linkedin.com/in/nandha06" target="_blank">linkedin.com/in/nandha06</a></div>
+          <div class="contact-item"><a href="https://github.com/Nandhu2036" target="_blank">github.com/Nandhu2036</a></div>
+          <div class="contact-item"><a href="https://nandhu2036.github.io/digital-hq/" target="_blank">nandhu2036.github.io/digital-hq</a></div>
+          <div class="contact-item">Chennai, India</div>
+        </div>
+        <div class="qr-container">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nandhu2036.github.io/digital-hq/&color=0a2540" alt="Portfolio QR" width="70" height="70">
+          <div class="qr-label">
+            Portfolio
+            <div class="qr-sublabel">Scan to View Portfolio</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -394,7 +477,7 @@
     <div class="section">
       <h2 class="section-title">Professional Summary</h2>
       <p class="summary-text">
-        Mechanical Engineering student with hands-on experience in reverse engineering, product design, industrial systems, CAD-driven workflows and technical documentation. Adept at converting engineering concepts into structured, implementation-ready information while collaborating across multidisciplinary environments. Strong foundation in mechanical systems, digital tools and process-oriented problem solving with a proven ability to quickly learn and adapt to new technologies.
+        Mechanical Engineering candidate bridging physical design, digital engineering, and additive manufacturing workflows. Experienced in establishing baseline technical documentation, performing design validation, and implementing rapid prototyping processes. Adept at converting physical concepts into structured, implementation-ready digital models while collaborating across multidisciplinary, cross-functional teams to optimize engineering communication and product lifecycles.
       </p>
     </div>
 
@@ -402,10 +485,10 @@
     <div class="section">
       <h2 class="section-title">Selected Highlights</h2>
       <ul class="highlights-list">
-        <li>Experience across reverse engineering, product design, industrial systems and manufacturing environments.</li>
-        <li>Strong ability to convert engineering concepts into structured implementation-ready information.</li>
-        <li>Exposure to multidisciplinary engineering workflows from design through validation and documentation.</li>
-        <li>Hands-on experience with both physical systems and digital engineering platforms.</li>
+        <li>Experienced in translating physical designs into structured engineering documentation and digital manufacturing files.</li>
+        <li>Proficient in rapid prototyping and CAD-to-production workflows utilizing major parametric modeling platforms.</li>
+        <li>Exposed to multidisciplinary engineering validation pipelines from dimensional inspection through technical reporting.</li>
+        <li>Demonstrated ability to facilitate cross-functional collaboration and optimize technical information organization.</li>
       </ul>
     </div>
 
@@ -436,7 +519,7 @@
         <div class="capability-card">
           <h3>Digital Engineering & Systems</h3>
           <ul>
-            <li>CAD Workflows</li>
+            <li>CAD-to-Production Workflows</li>
             <li>Systems Thinking</li>
             <li>Workflow Optimization</li>
             <li>Data Interpretation</li>
@@ -474,9 +557,9 @@
             <span class="item-date">June 2026</span>
           </div>
           <ul class="item-bullets">
-            <li>Captured high-accuracy dimensional data of legacy mechanical systems using precision metrology tools to establish reliable baseline technical documentation.</li>
-            <li>Executed digital engineering workflows to reconstruct physical geometries into parametric 3D CAD models, resolving design deviations and optimizing structures for modern assembly systems.</li>
-            <li>Performed clearance checks, fit validation, and tolerance stack analysis to verify cross-functional interface compatibility.</li>
+            <li>Captured high-accuracy dimensional data of mechanical systems using precision metrology tools to establish baseline technical documentation.</li>
+            <li>Executed digital engineering workflows to reconstruct physical geometries into parametric 3D models, resolving design deviations and model geometry errors.</li>
+            <li>Performed tolerance stack analysis and clearance checks to validate cross-functional compatibility with modern assemblies prior to print layout optimization.</li>
           </ul>
         </div>
 
@@ -503,7 +586,7 @@
           </div>
           <ul class="item-bullets">
             <li>Participated in CAD workflows and design validation of structural seating assemblies for high-reliability transit train systems.</li>
-            <li>Reviewed structural interface specifications and fasteners selection, ensuring compliance with manufacturing (DFM) requirements.</li>
+            <li>Reviewed structural interface specifications and fasteners selection, ensuring compliance with manufacturing (DFM) requirements and assembly tolerances.</li>
             <li>Drafted technical specifications and conducted tolerance analysis on sheet metal parts to satisfy quality validation reviews.</li>
           </ul>
         </div>
@@ -516,9 +599,9 @@
             <span class="item-date">July 2024 &ndash; August 2024</span>
           </div>
           <ul class="item-bullets">
-            <li>Conducted process analysis on floor packaging layouts, developing workflow optimization schemes that successfully increased output rates by 10%.</li>
-            <li>Established structured shipping layouts and dimension templates, improving information organization to minimize transport-related parts damage.</li>
-            <li>Provided engineering support during routine diagnostics and maintenance cycles, tracing mechanical issues to reduce machinery downtime by 15%.</li>
+            <li>Conducted process analysis on packaging layouts, developing workflow optimization schemes that successfully increased output rates by 10%.</li>
+            <li>Established structured shipping layouts and packaging specifications, improving information organization to protect mechanical parts during logistics cycles.</li>
+            <li>Provided engineering support during diagnostics and scheduled preventive maintenance, tracing mechanical issues to reduce machinery downtime parameters by 15%.</li>
           </ul>
         </div>
 
@@ -554,9 +637,9 @@
             <span class="item-tech">ROS &middot; IoT &middot; Fusion 360 &middot; Arduino &middot; Sensor Fusion</span>
           </div>
           <ul class="item-bullets">
-            <li>Co-developed a solar-powered, dual-function autonomous robotic catamaran engineered to simultaneously clear floating debris and analyze water chemical toxicity parameters.</li>
+            <li>Co-developed an autonomous robotic catamaran configured to clear floating debris and execute data interpretation of water toxicity levels.</li>
             <li>Implemented a real-time toxicity sensing and mapping framework integrating ROS node communications and IoT data streams, converting field telemetry into structured data sets.</li>
-            <li>Designed the twin-hull mechanical system structural geometry and sensor mounting interfaces in CAD, validating center of gravity and hydrodynamics clearance constraints.</li>
+            <li>Executed digital manufacturing workflows in CAD to optimize structural assemblies, sensor mounts, and rapid prototyping of hardware interfaces.</li>
           </ul>
         </div>
 
@@ -582,7 +665,7 @@
           <ul class="item-bullets">
             <li>Designed a stabilized floating vessel equipped with a high-resolution optical spectrometer gimbal for real-time remote environmental mapping of lake water quality indicators.</li>
             <li>Processed and analyzed hyperspectral spectral datasets using custom scripts to perform chlorophyll concentration mapping and microplastic polymer detection.</li>
-            <li>Executed digital engineering workflows to optimize structural gimbals and chassis components, validating designs for additive manufacturing limits to reduce wave disturbance interference.</li>
+            <li>Optimized structural gimbals and chassis components in CAD, validating designs to meet DfAM and print parameters to minimize wave disturbance interference.</li>
           </ul>
         </div>
 
