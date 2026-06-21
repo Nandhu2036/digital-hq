@@ -353,7 +353,7 @@ function initProjects() {
   container.innerHTML = '';
   
   // Bento order
-  const order = ['ecofloat', 'solar-tracker', 'reverse-engineering', 'seed-spreader', 'hollow-clock', 'aquatic-monitoring'];
+  const order = ['ecofloat', 'solar-tracker', 'regen-braking', 'seed-spreader', 'hollow-clock', 'aquatic-monitoring'];
   
   order.forEach((id, index) => {
     const proj = PROFILE_DATA.projects.find(p => p.id === id);
@@ -361,7 +361,7 @@ function initProjects() {
     
     let sizeClass = 'small';
     if (id === 'ecofloat') sizeClass = 'large';
-    else if (id === 'solar-tracker' || id === 'reverse-engineering') sizeClass = 'medium';
+    else if (id === 'solar-tracker' || id === 'regen-braking') sizeClass = 'medium';
     
     // Tech pills slice
     let techHtml = proj.technologies.slice(0, 3).map(t => `<span class="tech-pill">${t}</span>`).join('');
@@ -511,18 +511,6 @@ function initJourney() {
         "Inspected physical parts using metrology (micrometers, thread gauges) and generated parametric models.",
         "Optimized part structures and 3D printing slice parameters (PLA/PETG infill clearances).",
         "Published academic research papers detailing topological lattice stresses (diamond/gyroid) in COMSOL."
-      ]
-    },
-    {
-      year: "Future Vision",
-      title: "Product Innovation & Advanced Digital Engineering",
-      subtitle: "Hybrid Topologies & Hardware Automation",
-      icon: "rocket_launch",
-      details: "Aims to integrate structural mass topology optimization with automated firmware platforms, scaling marine environmental robotics and deploying hybrid TPMS components into lightweight aerospace assemblies.",
-      milestones: [
-        "Transitioning Project EcoFloat controls nodes to ROS 2 Humble Navigation stacks.",
-        "Exploring non-joint compliant mechanisms (flexure hinges) in Additive Manufacturing.",
-        "Deploying generative design algorithms to optimize load path brackets."
       ]
     }
   ];
@@ -861,7 +849,6 @@ function renderVaultCADModels(activeSubcat, query) {
     filtered = filtered.filter(c => {
       return c.title.toLowerCase().includes(query) || 
              c.description.toLowerCase().includes(query) || 
-             c.software.toLowerCase().includes(query) ||
              c.tags.some(t => t.toLowerCase().includes(query));
     });
   }
@@ -900,7 +887,7 @@ function renderVaultCADModels(activeSubcat, query) {
         <div class="cad-info-box">
           <div>
             <div class="cad-title-lbl">${c.title}</div>
-            <div class="cad-software-lbl">${c.software} // ${c.subCategory || c.category}</div>
+            <div class="cad-software-lbl">${c.subCategory || c.category}</div>
           </div>
           <div class="cad-action-links">
             <button onclick="openCADLightbox('${c.id}')" class="cad-link-btn" style="background:transparent; border:none; padding:0; cursor:pointer;">
@@ -920,7 +907,7 @@ function openCADLightbox(id) {
   const item = PROFILE_DATA.cadVault.find(c => c.id === id);
   if (!item) return;
   
-  openLightbox(item.filePath, `${item.title} (${item.software}) - ${item.description}`);
+  openLightbox(item.filePath, `${item.title} - ${item.description}`);
   
   const drawer = document.getElementById('lightbox-viewpoints-drawer');
   const container = document.getElementById('lightbox-viewpoints-container');
