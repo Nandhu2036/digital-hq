@@ -6,8 +6,8 @@
   
   <!-- SEO Optimization -->
   <title>Nandhakumar G | Personal Digital Headquarters</title>
-  <meta name="description" content="Professional digital headquarters of Nandhakumar G, Mechanical Engineering Undergrad specializing in CAD product design, autonomous marine vehicles, and additive manufacturing.">
-  <meta name="keywords" content="Nandhakumar G, Mechanical Engineer, CAD Design, Project EcoFloat, Autodesk Fusion 360, SolidWorks, Siemens NX, ROS 2, Tamil Nadu, Chennai">
+  <meta name="description" content="Professional digital headquarters of Nandhakumar G, Mechanical Engineer specializing in CAD product design, autonomous marine vehicles, and additive manufacturing.">
+  <meta name="keywords" content="Nandhakumar G, Mechanical Engineer, CAD Design, Project EcoFloat, Autodesk Fusion 360, SolidWorks, Siemens NX, ROS 2, Additive Manufacturing, DfAM, Reverse Engineering">
   <meta name="author" content="Nandhakumar G">
 
   <!-- Open Graph -->
@@ -38,24 +38,14 @@
       </a>
       
       <nav class="navbar-links">
-        <a href="#about" class="nav-link">About</a>
-        <a href="#journey" class="nav-link">Journey</a>
-        <a href="#skills" class="nav-link">Skills</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#archive-explorer" class="nav-link">Archive</a>
-        <a href="#experience" class="nav-link">Experience</a>
-        <a href="#github" class="nav-link">GitHub</a>
+        <a href="#journey" class="nav-link">Journey</a>
+        <a href="#ecosystem" class="nav-link">Ecosystem</a>
+        <a href="#verification" class="nav-link">Verification</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
 
       <div class="navbar-actions">
-        <!-- Universal Search Trigger -->
-        <button id="search-trigger" class="action-btn" title="Search Digital HQ (Ctrl+K)">
-          <span class="material-symbols-outlined">search</span>
-          <span class="btn-text">Search</span>
-          <span class="shortcut-badge">⌘K</span>
-        </button>
-        
         <button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Toggle menu">
           <span class="material-symbols-outlined">menu</span>
         </button>
@@ -66,698 +56,300 @@
   <!-- Mobile Dropdown Menu -->
   <div id="mobile-dropdown" class="mobile-menu">
     <nav class="mobile-nav-links">
-      <a href="#about" class="mobile-link">About</a>
-      <a href="#journey" class="mobile-link">Journey</a>
-      <a href="#skills" class="mobile-link">Skills</a>
       <a href="#projects" class="mobile-link">Projects</a>
-      <a href="#archive-explorer" class="mobile-link">Archive</a>
-      <a href="#experience" class="mobile-link">Experience</a>
-      <a href="#github" class="mobile-link">GitHub</a>
+      <a href="#journey" class="mobile-link">Journey</a>
+      <a href="#ecosystem" class="mobile-link">Ecosystem</a>
+      <a href="#verification" class="mobile-link">Verification</a>
       <a href="#contact" class="mobile-link">Contact</a>
     </nav>
   </div>
 
-  <!-- Engineering Background Grid Layer -->
-  <div class="engineering-grid-overlay"></div>
+  <!-- Blueprint Background Grid Overlay -->
+  <div class="blueprint-grid-overlay"></div>
 
   <!-- Main Content Space -->
   <main class="page-container">
 
-    <!-- TIER 1: IMMEDIATE IMPACT -->
-    
-    <!-- Hero Section -->
+    <!-- ACT 1: HERO COMMAND DECK -->
     <section id="hero" class="hero-section">
-      <div class="hero-content">
+      <div class="hero-layout">
         <div class="hero-left">
-          <h1 class="hero-name" id="hero-profile-name">NANDHAKUMAR G</h1>
-          
-          <h2 class="hero-statement" id="hero-tagline">
-            Designing, Building & Documenting Engineering Solutions
-          </h2>
-          
-          <p class="hero-description" id="hero-bio">
-            Mechanical Engineering undergraduate specializing in the integration of advanced CAD modeling, autonomous systems, and additive manufacturing. Proven ability to optimize mechanical performance through data-driven analysis.
-          </p>
-
-          <div class="hero-quick-links">
-            <a href="mailto:nandhu2036os@gmail.com" class="link-item">
-              <span class="material-symbols-outlined">mail</span> Email
-            </a>
-            <a href="https://www.linkedin.com/in/nandha06" target="_blank" class="link-item">
-              <span class="material-symbols-outlined">work</span> LinkedIn
-            </a>
-            <a href="https://github.com/Nandhu2036" target="_blank" class="link-item">
-              <span class="material-symbols-outlined">code</span> GitHub
-            </a>
-          </div>
-
-          <div class="hero-cta-buttons">
-            <a href="assets/documents/Nandhakumar_G_Resume.pdf" download class="btn-primary" id="hero-resume-btn">
-              <span class="material-symbols-outlined">download</span> Download Resume
-            </a>
-            <a href="#contact" class="btn-secondary">
-              <span class="material-symbols-outlined">chat</span> Get In Touch
-            </a>
+          <h1 class="hero-title">Engineering Ideas Into Reality</h1>
+          <p class="hero-subtitle">Mechanical Engineer | Product Designer | Additive Manufacturing Enthusiast</p>
+          <div class="hero-cta-group">
+            <a href="#projects" class="btn-primary magnetic-btn">View Projects</a>
+            <a href="assets/documents/Nandhakumar_G_Resume.pdf" download class="btn-secondary magnetic-btn">Download Resume</a>
+            <a href="#contact" class="btn-outline magnetic-btn">Contact Me</a>
           </div>
         </div>
-
         <div class="hero-right">
-          <!-- Portrait Container with Fallback Monogram -->
-          <div class="portrait-card">
-            <div class="portrait-image-wrapper">
-              <img id="portrait-img" src="assets/profile/portrait.jpg" alt="Nandhakumar G" onerror="this.style.display='none'; document.getElementById('portrait-placeholder').style.display='flex';">
-              <div id="portrait-placeholder" class="monogram-placeholder" style="display:none;">
-                <div class="pulse-ring">
-                  <span class="placeholder-letters">NG</span>
-                </div>
-                <span class="placeholder-label">Nandhakumar G // Personal Digital HQ</span>
-              </div>
-            </div>
-            <div class="portrait-card-footer">
-              <span class="material-symbols-outlined">verified_user</span>
-              <span>NANDHAKUMAR</span>
-            </div>
+          <div class="canvas-container">
+            <canvas id="hero-vector-canvas"></canvas>
+            <div class="canvas-label" id="canvas-shape-label">Gear Assembly</div>
           </div>
         </div>
-      </div>
-
-      <!-- Quick Metrics Cards -->
-      <div class="hero-metrics-grid" id="metrics-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-    <!-- Professional Snapshot Card Section -->
-    <section id="snapshot" class="section-container">
-      <div class="snapshot-card-layout">
-        <div class="snapshot-header">
-          <span class="material-symbols-outlined text-gold">fingerprint</span>
-          <h3>Professional Identity Snapshot</h3>
-        </div>
-        <div class="snapshot-body">
-          <div class="snapshot-col">
-            <div class="snap-item">
-              <label>Name</label>
-              <span id="snap-name">Nandhakumar G</span>
-            </div>
-            <div class="snap-item">
-              <label>Professional Title</label>
-              <span id="snap-title">Mechanical Engineering Undergrad</span>
-            </div>
-            <div class="snap-item">
-              <label>Core Domain</label>
-              <span id="snap-domain" class="font-bold">Product Design & Engineering</span>
-            </div>
-          </div>
-          
-          <div class="snapshot-col">
-            <div class="snap-item">
-              <label>Specializations</label>
-              <div class="snap-tags-container" id="snap-specializations">
-                <!-- Rendered via JS -->
-              </div>
-            </div>
-          </div>
-
-          <div class="snapshot-col">
-            <div class="snap-item">
-              <label>Currently Learning</label>
-              <span id="snap-learning">ROS 2 (Robot Operating System)</span>
-            </div>
-            <div class="snap-item">
-              <label>Open To</label>
-              <div class="snap-list-container" id="snap-opento">
-                <!-- Rendered via JS -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Engineering Command Center (Signature Component) -->
-    <section id="command-center" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Subsystem Monitor</div>
-        <h2 class="section-title">Engineering Command Center</h2>
-      </div>
-
-      <div class="command-center-grid">
-        <!-- Current Focus Card -->
-        <div class="command-card primary-focus-card">
-          <div class="card-glow-overlay"></div>
-          <div class="card-header">
-            <span class="material-symbols-outlined text-indigo">track_changes</span>
-            <h4>Current Focus Area</h4>
-          </div>
-          <div class="card-body">
-            <div class="focus-list" id="focus-container">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-        </div>
-
-        <!-- System State Log Card -->
-        <div class="command-card state-log-card">
-          <div class="card-glow-overlay"></div>
-          <div class="card-header">
-            <span class="material-symbols-outlined text-teal">terminal</span>
-            <h4>System State & Log</h4>
-          </div>
-          <div class="card-body terminal-style">
-            <div class="terminal-row">
-              <span class="term-lbl">CURRENTLY BUILDING:</span>
-              <span class="term-val text-white" id="cc-building-name">Project EcoFloat</span>
-              <div class="term-desc" id="cc-building-desc">Dual-function autonomous marine cleaning vessel</div>
-            </div>
-            <div class="terminal-row">
-              <span class="term-lbl">CURRENTLY LEARNING:</span>
-              <span class="term-val text-teal" id="cc-learning">ROS 2 & ROS Melodic</span>
-            </div>
-            <div class="terminal-row">
-              <span class="term-lbl">LATEST ACTIVITY:</span>
-              <span class="term-val text-gold" id="cc-activity">Designed seed spreader gear module</span>
-            </div>
-            <div class="terminal-row">
-              <span class="term-lbl">UPCOMING GOAL:</span>
-              <span class="term-val text-white" id="cc-goal">Advanced engineering thesis</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TIER 2: PROFESSIONAL IDENTITY -->
-
-    <!-- About & Engineering Journey Section -->
-    <section id="about" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Verify My Credentials</div>
-        <h2 class="section-title">About & Engineering Journey</h2>
-      </div>
-
-      <div class="about-timeline-layout">
-        <!-- Left: Bio and Career Overview -->
-        <div class="about-bio-side">
-          <div class="matte-card about-card">
-            <h3>Undergrad Profile</h3>
-            <p>I am a Mechanical Engineering student currently pursuing my Bachelor's degree at St. Joseph’s College of Engineering in Chennai. My engineering philosophy lies in uniting precise physical CAD modeling with programmatic automation to resolve modern structural and environmental problems.</p>
-            <p>I focus on leveraging data-driven analyses, 3D printing parameters configurations, and controls system integrations (such as ROS and Arduino embedded microcontrollers) to build reliable autonomous hardware platforms.</p>
-            
-            <div class="edu-highlights">
-              <h4>Academic Path</h4>
-              <div class="edu-pill">
-                <span class="material-symbols-outlined">school</span>
-                <div>
-                  <strong>St. Joseph’s College of Engineering</strong>
-                  <p>B.E. Mechanical Engineering | 2023 - Present</p>
-                </div>
-              </div>
-              <div class="edu-pill">
-                <span class="material-symbols-outlined">history_edu</span>
-                <div>
-                  <strong>Shri Swamy Matric School</strong>
-                  <p>Class XII Computer Science | 2022 - 2023</p>
-                </div>
-              </div>
-              <div class="edu-pill">
-                <span class="material-symbols-outlined">history_edu</span>
-                <div>
-                  <strong>Shri Swamy Matric School</strong>
-                  <p>Class X Secondary Education | 2020 - 2021</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Interactive Timeline -->
-        <div class="journey-timeline-side">
-          <div class="timeline-wrapper" id="timeline-container">
-            <!-- Timeline elements rendered via JS -->
-          </div>
-
-          <!-- Sliding Detail Drawer -->
-          <div id="timeline-detail-drawer" class="drawer-panel">
-            <button id="drawer-close" class="drawer-close-btn">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-            <div id="drawer-content" class="drawer-body">
-              <!-- Content loaded dynamically when milestone clicked -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Skills Dashboard Section -->
-    <section id="skills" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Quantified Competence</div>
-        <h2 class="section-title">Skills & Tools Dashboard</h2>
-      </div>
-
-      <div class="skills-dashboard-layout" id="skills-dashboard-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-    <!-- Internship Experience Section -->
-    <section id="experience" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Real-World Exposure</div>
-        <h2 class="section-title">Internship Experience</h2>
-      </div>
-
-      <div class="experience-list-layout" id="internships-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-    <!-- Featured Work Section -->
-    <section id="featured-work" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Selected High-Impact Developments</div>
-        <h2 class="section-title">Featured Work</h2>
-      </div>
-
-      <div class="featured-grid" id="featured-projects-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-
-    <!-- TIER 3: PORTFOLIO ASSETS (COMPLETE ARCHIVE SYSTEM) -->
-
-    <!-- Engineering Knowledge Base & Archive Explorer -->
-    <!-- Engineering Knowledge Base & Archive Promo -->
-    <section id="archive-promo" class="section-container">
-      <div class="archive-promo-grid">
-        <div class="archive-promo-content">
-          <div class="section-subtitle">Central Knowledge Base &amp; Digital Museum</div>
-          <h2 class="section-title">Engineering Archive Explorer</h2>
-          <p class="section-desc">An immersive, interconnected central library containing CAD assemblies, professional certificates, slide presentations, technical documents, and research papers from my academic and design journey.</p>
-          
-          <div class="archive-stats-row">
-            <div class="archive-stat-item">
-              <span class="stat-num">50+</span>
-              <span class="stat-lbl">CAD Models</span>
-            </div>
-            <div class="archive-stat-item">
-              <span class="stat-num">28</span>
-              <span class="stat-lbl">Exercises</span>
-            </div>
-            <div class="archive-stat-item">
-              <span class="stat-num">10+</span>
-              <span class="stat-lbl">Credentials</span>
-            </div>
-            <div class="archive-stat-item">
-              <span class="stat-num">5+</span>
-              <span class="stat-lbl">Reports</span>
-            </div>
-          </div>
-
-          <button id="open-archive-btn" class="btn btn-primary" style="margin-top: 32px;">
-            <span class="material-symbols-outlined">explore</span>
-            <span>Launch Archive Terminal</span>
-          </button>
-        </div>
-        
-        <div class="archive-promo-visual" id="open-archive-visual-trigger">
-          <div class="visual-stack-wrapper">
-            <div class="visual-card card-3"></div>
-            <div class="visual-card card-2"></div>
-            <div class="visual-card card-1">
-              <div class="visual-card-header">
-                <span class="material-symbols-outlined text-indigo">database</span>
-                <span class="card-title">Archive Explorer v2.0</span>
-              </div>
-              <div class="visual-card-body">
-                <div class="mock-line short"></div>
-                <div class="mock-line long"></div>
-                <div class="mock-line medium"></div>
-                <div class="mock-grid">
-                  <div class="mock-box"></div>
-                  <div class="mock-box"></div>
-                  <div class="mock-box"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Memory Photo Gallery Section -->
-    <section id="gallery" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Snapshots from Workshops & Teams</div>
-        <h2 class="section-title">Memory Gallery</h2>
-      </div>
-
-      <div class="gallery-masonry" id="gallery-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-
-    <!-- TIER 4: PERSONALITY & FUTURE -->
-
-    <!-- Beyond My Resume Section -->
-    <section id="beyond-resume" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Unexplored Engineering Channels</div>
-        <h2 class="section-title">Beyond My Resume</h2>
-      </div>
-
-      <div class="beyond-timeline-feed" id="beyond-feed-container">
-        <!-- Rendered via JS -->
-      </div>
-    </section>
-
-    <!-- Live GitHub Dashboard -->
-    <section id="github" class="section-container">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Live Version Control Activity</div>
-        <h2 class="section-title">GitHub Developer Dashboard</h2>
-      </div>
-
-      <div class="github-dashboard-card">
-        <div class="github-header">
-          <div class="github-profile-info">
-            <img id="github-avatar" src="" alt="GitHub Avatar" class="github-avatar">
-            <div>
-              <h3 id="github-user-id">github.com/Nandhu2036</h3>
-              <p>Active repositories tracking autonomous navigation hardware controls</p>
-            </div>
-          </div>
-          <a href="https://github.com/Nandhu2036" target="_blank" class="btn-github-profile">
-            <span class="material-symbols-outlined">open_in_new</span> Visit Profile
-          </a>
-        </div>
-
-        <div class="github-stats-row">
-          <div class="github-stat-card">
-            <span class="stat-num" id="github-repo-count">--</span>
-            <span class="stat-lbl">Public Repositories</span>
-          </div>
-          <div class="github-stat-card">
-            <span class="stat-num" id="github-followers">--</span>
-            <span class="stat-lbl">GitHub Followers</span>
-          </div>
-          <div class="github-stat-card full-width-sm">
-            <span class="stat-lbl">Primary Languages Frequency</span>
-            <div class="github-lang-chart" id="github-languages-chart">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-        </div>
-
-        <div class="github-repos-section">
-          <h4>Recent Active Repositories</h4>
-          <div class="github-repos-grid" id="github-repos-container">
-            <!-- Rendered via JS -->
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section-container contact-section">
-      <div class="section-title-wrapper">
-        <div class="section-subtitle">Start an Engineering Conversation</div>
-        <h2 class="section-title">Connect With Me</h2>
-      </div>
-
-      <div class="contact-card-layout">
-        <!-- Left: Quick info -->
-        <div class="contact-info-card">
-          <h3>Contact Details</h3>
-          <p>Looking to collaborate on mechanical designs, autonomous vessels testing, or discuss industrial internship roles. Drop a message or reach out via professional handles.</p>
-          
-          <div class="contact-details-list">
-            <div class="contact-detail-item">
-              <span class="material-symbols-outlined text-indigo">mail</span>
-              <div>
-                <label>Direct Email</label>
-                <a href="mailto:nandhu2036os@gmail.com">nandhu2036os@gmail.com</a>
-              </div>
-            </div>
-            
-            <div class="contact-detail-item">
-              <span class="material-symbols-outlined text-teal">call</span>
-              <div>
-                <label>Phone Number</label>
-                <span>+91 93441-61321</span>
-              </div>
-            </div>
-
-            <div class="contact-detail-item">
-              <span class="material-symbols-outlined text-gold">location_on</span>
-              <div>
-                <label>Location</label>
-                <span>Chennai, Tamil Nadu, India</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Clean Contact Form -->
-        <div class="contact-form-card">
-          <form id="contact-form" action="#" method="POST" class="matte-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="form-name">Full Name</label>
-                <input type="text" id="form-name" required placeholder="Your Name">
-              </div>
-              <div class="form-group">
-                <label for="form-email">Email Address</label>
-                <input type="email" id="form-email" required placeholder="your.email@example.com">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="form-subject">Subject</label>
-              <input type="text" id="form-subject" required placeholder="Project Inquiry / Collaboration">
-            </div>
-
-            <div class="form-group">
-              <label for="form-message">Detailed Message</label>
-              <textarea id="form-message" rows="5" required placeholder="Hi Nandha, I reviewed your EcoFloat autonomous vessel project models and would like to..."></textarea>
-            </div>
-
-            <button type="submit" class="btn-primary form-submit-btn">
-              <span class="material-symbols-outlined">send</span> Send Message
-            </button>
-            
-            <div id="form-status" class="form-status-alert"></div>
-          </form>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Global Footer -->
-  <footer class="global-footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <strong>NANDHAKUMAR G</strong>
-        <p>Mechanical Engineer | Builder | Designer</p>
-      </div>
-      <div class="footer-links">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#archive-explorer">Archive</a>
-        <a href="#experience">Experience</a>
-      </div>
-      <div class="footer-credits">
-        <p>&copy; 2026 Nandhakumar G. Built from scratch. All assets are verifiable records.</p>
-      </div>
-    </div>
-  </footer>
-
-
-  <!-- GLOBAL UTILITY OVERLAYS -->
-
-  <!-- 1. Universal Search Overlay Modal -->
-  <div id="global-search-modal" class="search-overlay">
-    <div class="search-modal-container">
-      <div class="search-modal-header">
-        <span class="material-symbols-outlined">search</span>
-        <input type="text" id="global-search-input" placeholder="Search projects, certs, skills, reports, drawings..." autofocus>
-        <button id="search-modal-close" class="close-btn" title="Close Search (Esc)">
-          <span class="material-symbols-outlined">close</span>
-        </button>
       </div>
       
-      <div class="search-results-body">
-        <div id="search-results-feedback" class="results-feedback">Type to search the digital headquarters...</div>
-        
-        <div class="search-results-categories" id="search-results-container">
-          <!-- Populated via JS search engine -->
+      <!-- Quick Metrics Row -->
+      <div class="hero-metrics-row">
+        <div class="metric-item">
+          <span class="metric-num">19+</span>
+          <span class="metric-label">Projects</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num">3</span>
+          <span class="metric-label">Internships</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num">40+</span>
+          <span class="metric-label">Certificates</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num">6+</span>
+          <span class="metric-label">Engineering Domains</span>
         </div>
       </div>
+    </section>
 
-      <div class="search-modal-footer">
-        <span>Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate, <kbd>Enter</kbd> to select, <kbd>Esc</kbd> to close</span>
+    <!-- ACT 2: PROJECT SHOWCASE (BENTO GRID) -->
+    <section id="projects" class="section-container">
+      <div class="section-header">
+        <span class="section-badge">Featured Developments</span>
+        <h2 class="section-title">Project Showcase</h2>
       </div>
-    </div>
-  </div>
+      <div class="projects-bento-grid" id="projects-bento-grid">
+        <!-- Dynamically populated via JS -->
+      </div>
+    </section>
 
-  <!-- 1. Fullscreen Engineering Archive Modal -->
-  <div id="archive-explorer-modal" class="modal-overlay archive-modal-overlay">
-    <div class="archive-modal-window">
-      <div class="archive-modal-header">
-        <div class="archive-modal-title-box">
-          <span class="material-symbols-outlined text-indigo" style="font-size:24px;">database</span>
-          <div>
-            <h3>Engineering Archive Explorer</h3>
-            <span class="archive-modal-subtitle">Central Knowledge Base &amp; Digital Museum</span>
+    <!-- ACT 3: ENGINEERING JOURNEY -->
+    <section id="journey" class="section-container">
+      <div class="section-header">
+        <span class="section-badge">Milestones</span>
+        <h2 class="section-title">Engineering Journey</h2>
+      </div>
+      <div class="journey-timeline-wrapper">
+        <div class="timeline-line"></div>
+        <div class="timeline-nodes-list" id="timeline-container">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ACT 4: ENGINEERING ECOSYSTEM -->
+    <section id="ecosystem" class="section-container">
+      <div class="section-header">
+        <span class="section-badge">Capabilities</span>
+        <h2 class="section-title">Engineering Ecosystem</h2>
+      </div>
+      <div class="ecosystem-layout">
+        <!-- Part A: Interactive Identity -->
+        <div class="ecosystem-col identity-column">
+          <h3 class="ecosystem-title">
+            <span class="material-symbols-outlined">engineering</span>
+            <span>Identity Domains</span>
+          </h3>
+          <div class="identity-cards-list" id="identity-cards">
+            <!-- Dynamically populated via JS -->
           </div>
         </div>
-        <button class="modal-close-btn" id="close-archive-btn" aria-label="Close Archive" style="position:static;">
-          <span class="material-symbols-outlined">close</span>
-        </button>
+
+        <!-- Part B: Skill Network -->
+        <div class="ecosystem-col skills-column">
+          <h3 class="ecosystem-title">
+            <span class="material-symbols-outlined">hub</span>
+            <span>Skill Network</span>
+          </h3>
+          <div class="skills-grid" id="skills-container">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Part C: Live Status Board -->
+        <div class="ecosystem-col status-column">
+          <h3 class="ecosystem-title">
+            <span class="material-symbols-outlined">sensors</span>
+            <span>Live Status Board</span>
+          </h3>
+          <div class="status-cards-list" id="status-container">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
       </div>
-      
-      <div class="archive-explorer-container">
-        <!-- Explorer Header: Navigation Tabs -->
-        <div class="archive-tabs-header">
-          <button class="archive-tab-btn active" data-tab="designs">
-            <span class="material-symbols-outlined">model_training</span>
-            <span>Design Vault</span>
-          </button>
-          <button class="archive-tab-btn" data-tab="certificates">
+    </section>
+
+    <!-- ACT 5: TRUST & CONNECT -->
+    <section id="trust-connect" class="section-container">
+      <div class="trust-connect-grid">
+        <!-- Part A: Verification Center -->
+        <div class="verification-center" id="verification">
+          <h3 class="trust-title">
             <span class="material-symbols-outlined">verified</span>
-            <span>Certificate Vault</span>
-          </button>
-          <button class="archive-tab-btn" data-tab="presentations">
-            <span class="material-symbols-outlined">co_present</span>
-            <span>Presentation Center</span>
-          </button>
-          <button class="archive-tab-btn" data-tab="documents">
-            <span class="material-symbols-outlined">library_books</span>
-            <span>Document Hub</span>
-          </button>
-          <button class="archive-tab-btn" data-tab="research">
-            <span class="material-symbols-outlined">science</span>
-            <span>Research Hub</span>
-          </button>
+            <span>Verification Center</span>
+          </h3>
+          
+          <div class="vault-tabs">
+            <button class="vault-tab-btn active" data-tab="certificates">
+              <span class="material-symbols-outlined">verified</span> Certificates
+            </button>
+            <button class="vault-tab-btn" data-tab="reports">
+              <span class="material-symbols-outlined">description</span> Reports
+            </button>
+            <button class="vault-tab-btn" data-tab="cad">
+              <span class="material-symbols-outlined">model_training</span> CAD Models
+            </button>
+          </div>
+
+          <div class="vault-search-bar">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="vault-search-input" placeholder="Query verification credentials...">
+          </div>
+
+          <div class="vault-results-pane">
+            <!-- Pane: Certificates -->
+            <div id="vault-pane-certificates" class="vault-pane active">
+              <div class="vault-grid" id="vault-certs-grid">
+                <!-- Certs list dynamic -->
+              </div>
+            </div>
+
+            <!-- Pane: Reports & Papers -->
+            <div id="vault-pane-reports" class="vault-pane">
+              <div class="vault-list-container">
+                <table class="vault-table">
+                  <thead>
+                    <tr>
+                      <th>Document</th>
+                      <th>Tools</th>
+                      <th>Size</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vault-reports-table">
+                    <!-- Reports dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Pane: CAD Models -->
+            <div id="vault-pane-cad" class="vault-pane">
+              <div class="cad-subcategories-filter" id="cad-subcategories">
+                <!-- Subcategory buttons generated by JS -->
+              </div>
+              <div class="vault-grid" id="vault-cad-grid">
+                <!-- CAD items dynamic -->
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Dynamic Archive Workspace -->
-        <div class="archive-workspace">
-          
-          <!-- Persistent Sidebar Controls -->
-          <aside class="archive-sidebar">
-            <div class="sidebar-widget">
-              <h4>Filter &amp; Locate</h4>
-              <div class="archive-search-box">
-                <span class="material-symbols-outlined">search</span>
-                <input type="text" id="archive-sidebar-search" placeholder="Query archive properties...">
+        <!-- Part B: GitHub Workspace -->
+        <div class="github-observatory" id="github">
+          <h3 class="trust-title">
+            <span class="material-symbols-outlined">code</span>
+            <span>GitHub Workspace</span>
+          </h3>
+          <div class="github-dashboard-compact">
+            <div class="github-user-card">
+              <img id="github-avatar" src="" alt="Avatar" class="git-avatar">
+              <div class="git-meta">
+                <h4 id="github-user-id">github.com/Nandhu2036</h4>
+                <p>Tracking controls, robotics interfaces, and product prototyping projects.</p>
               </div>
             </div>
-
-            <!-- Contextual Filter Lists (Loaded Dynamically) -->
-            <div class="sidebar-widget" id="sidebar-filters-widget">
-              <!-- Rendered contextually depending on active tab -->
-            </div>
-            
-            <div class="sidebar-widget info-widget">
-              <span class="material-symbols-outlined text-gold">info</span>
-              <p>This archive is an interconnected record database. Click tags or related link items to launch details logs.</p>
-            </div>
-          </aside>
-
-          <!-- Main Archive Grid/List Pane -->
-          <div class="archive-pane">
-            
-            <!-- Designs Tab Workspace -->
-            <div class="archive-tab-pane active" id="pane-designs">
-              <div class="design-vault-grid" id="explorer-designs-grid">
-                <!-- CAD Cards rendered via JS -->
+            <div class="git-stats-row">
+              <div class="git-stat">
+                <span class="git-num" id="github-repo-count">--</span>
+                <span class="git-lbl">Repositories</span>
+              </div>
+              <div class="git-stat">
+                <span class="git-num" id="github-followers">--</span>
+                <span class="git-lbl">Followers</span>
               </div>
             </div>
+            <div class="git-languages-section">
+              <h5>Code Frequency Breakdown</h5>
+              <div class="git-languages-bar" id="github-languages-chart"></div>
+            </div>
+            <div class="git-repos-section">
+              <h5>Active Repositories</h5>
+              <div class="git-repos-list" id="github-repos-container"></div>
+            </div>
+          </div>
+        </div>
 
-            <!-- Certificates Tab Workspace -->
-            <div class="archive-tab-pane" id="pane-certificates">
-              <div class="vault-controls" style="border:none; padding: 0 0 16px 0; margin-bottom:16px;">
-                <div class="view-mode-group">
-                  <button class="view-mode-btn active" id="btn-cert-grid">
-                    <span class="material-symbols-outlined">grid_view</span> Grid
-                  </button>
-                  <button class="view-mode-btn" id="btn-cert-timeline">
-                    <span class="material-symbols-outlined">timeline</span> Chronology
-                  </button>
+        <!-- Part C: Contact CTA -->
+        <div class="contact-cta-section" id="contact">
+          <h2 class="cta-statement">Let's Build The Future Together</h2>
+          <div class="cta-layout">
+            <div class="cta-left">
+              <form id="contact-form" class="cta-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="form-name">Name</label>
+                    <input type="text" id="form-name" required placeholder="Your Name">
+                  </div>
+                  <div class="form-group">
+                    <label for="form-email">Email</label>
+                    <input type="email" id="form-email" required placeholder="name@example.com">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="form-subject">Subject</label>
+                  <input type="text" id="form-subject" required placeholder="Inquiry / Collaboration">
+                </div>
+                <div class="form-group">
+                  <label for="form-message">Message</label>
+                  <textarea id="form-message" rows="4" required placeholder="Your message..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary magnetic-btn">
+                  <span class="material-symbols-outlined" style="font-size:16px;">send</span> Send Message
+                </button>
+                <div id="form-status" class="form-status"></div>
+              </form>
+            </div>
+            <div class="cta-right">
+              <div class="contact-info-list">
+                <div class="info-item">
+                  <span class="material-symbols-outlined">mail</span>
+                  <a href="mailto:nandhu2036os@gmail.com">nandhu2036os@gmail.com</a>
+                </div>
+                <div class="info-item">
+                  <span class="material-symbols-outlined">phone_iphone</span>
+                  <span>+91 93441-61321</span>
+                </div>
+                <div class="info-item">
+                  <span class="material-symbols-outlined">location_on</span>
+                  <span>Chennai, Tamil Nadu, India</span>
+                </div>
+                <div class="info-item">
+                  <span class="material-symbols-outlined">work</span>
+                  <a href="https://www.linkedin.com/in/nandha06" target="_blank">linkedin.com/in/nandha06</a>
+                </div>
+                <div class="info-item">
+                  <span class="material-symbols-outlined">code</span>
+                  <a href="https://github.com/Nandhu2036" target="_blank">github.com/Nandhu2036</a>
                 </div>
               </div>
               
-              <!-- Grid Container -->
-              <div class="certificate-grid" id="explorer-certs-grid">
-                <!-- Cert cards rendered via JS -->
-              </div>
-
-              <!-- Chronological Timeline Container -->
-              <div class="certs-timeline-container" id="explorer-certs-timeline" style="display:none;">
-                <!-- Vertical certificate timeline -->
+              <div class="qr-code-wrapper">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nandhu2036.github.io/digital-hq/&color=2563eb" alt="Portfolio QR Code" class="portfolio-qr">
+                <div class="qr-label">
+                  <strong>Portfolio</strong>
+                  <span>Scan to View Portfolio</span>
+                </div>
               </div>
             </div>
-
-            <!-- Presentations Tab Workspace -->
-            <div class="archive-tab-pane" id="pane-presentations">
-              <div class="presentations-grid" id="explorer-presentations-grid">
-                <!-- Presentation cards rendered via JS -->
-              </div>
-            </div>
-
-            <!-- Documents Tab Workspace -->
-            <div class="archive-tab-pane" id="pane-documents">
-              <div class="document-table-container" style="box-shadow:none; border:none;">
-                <table class="doc-table">
-                  <thead>
-                    <tr>
-                      <th>Document Name</th>
-                      <th>Tools Used</th>
-                      <th>Category</th>
-                      <th>Size</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="explorer-documents-table">
-                    <!-- Document rows rendered via JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Research Tab Workspace -->
-            <div class="archive-tab-pane" id="pane-research">
-              <div class="document-table-container" style="box-shadow:none; border:none;">
-                <table class="doc-table">
-                  <thead>
-                    <tr>
-                      <th>Research Paper Title</th>
-                      <th>Boundary Software</th>
-                      <th>Size</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="explorer-research-table">
-                    <!-- Research paper rows rendered via JS -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
           </div>
-
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <!-- 2. Project Full Details Modal -->
+  <!-- GLOBAL OVERLAY MODALS -->
+
+  <!-- 1. Project Full Details Modal -->
   <div id="project-detail-modal" class="modal-overlay">
     <div class="project-modal-box">
       <button id="project-detail-modal-close" class="modal-close-btn" title="Close Details">
@@ -769,7 +361,7 @@
     </div>
   </div>
 
-  <!-- 3. PDF Viewer Modal (Supports Embed PDFs) -->
+  <!-- 2. PDF Viewer Modal (Supports Embed PDFs) -->
   <div id="cert-viewer-modal" class="modal-overlay">
     <div class="cert-modal-box">
       <div class="cert-modal-header">
@@ -789,19 +381,7 @@
     </div>
   </div>
 
-  <!-- 4. Presentation Slide Outline Preview Modal -->
-  <div id="presentation-preview-modal" class="modal-overlay">
-    <div class="project-modal-box" style="max-width:750px;">
-      <button id="pres-modal-close" class="modal-close-btn" title="Close Slide Preview">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <div class="project-modal-inner" id="pres-modal-content">
-        <!-- Populated dynamically with slide lists -->
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. Zoom Image / Drawing Lightbox (Equipped with Viewpoints Slideshow) -->
+  <!-- 3. Zoom Image / Drawing Lightbox (Equipped with Viewpoints Slideshow) -->
   <div id="lightbox-modal" class="modal-overlay lightbox-overlay">
     <button id="lightbox-close" class="lightbox-close-btn" title="Close Zoom">
       <span class="material-symbols-outlined">close</span>
@@ -821,9 +401,6 @@
       </div>
     </div>
   </div>
-
-
-
 
   <!-- JS Engines Loading -->
   <script src="data.js"></script>

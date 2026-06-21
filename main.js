@@ -1,250 +1,405 @@
-// Personal Digital Headquarters - Main UI Engine
+// Personal Digital Headquarters - Main UI Engine V2
 // Driven by PROFILE_DATA loaded from data.js
 
-let activeArchiveTab = 'designs';
-let certViewMode = 'grid'; // 'grid' or 'timeline'
-let selectedFilter = 'all';
-let currentActiveCAD = null; // Track CAD item for viewpoints slideshow
+let activeCADSubCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Add Femlogic Reverse Engineering project dynamically to profile data
+  injectReverseEngineeringProject();
+
   // Initialize dynamic contents
-  initHero();
-  initSnapshot();
-  initCommandCenter();
-  initJourney();
-  initSkills();
+  init3DCanvas();
   initProjects();
-  initInternships();
-  initGallery();
-  initBeyondResume();
+  initJourney();
+  initEcosystem();
+  initVerificationCenter();
   initGitHubDashboard();
   
-  // Initialize Knowledge Archive Explorer (Consolidated T3)
-  initArchiveExplorer();
-  
-  // Set up event listeners
+  // Navigation & Menu setups
   initNavbarScroll();
   initMobileMenu();
-  initUniversalSearch();
   initModals();
   initContactForm();
-
-  // Redesign Premium Interactions
   initLightboxZoomPan();
-  initSearchKeyboardNav();
+  initMagneticButtons();
 });
 
-/* ==================== 1. DATA RENDERING ENGINES ==================== */
+/* ==================== 0. DYNAMIC DATA INJECTION ==================== */
 
-function initHero() {
-  const data = PROFILE_DATA.personal;
-  
-  // Tagline & Bio
-  document.getElementById('hero-tagline').textContent = data.tagline;
-  document.getElementById('hero-bio').textContent = data.bio;
-  
-  // Render Metric Cards
-  const metricsContainer = document.getElementById('metrics-container');
-  metricsContainer.innerHTML = '';
-  PROFILE_DATA.metrics.forEach(metric => {
-    metricsContainer.innerHTML += `
-      <div class="metric-card">
-        <div class="metric-icon-box">
-          <span class="material-symbols-outlined">${metric.icon}</span>
-        </div>
-        <div class="metric-text-box">
-          <span class="metric-value">${metric.value}</span>
-          <span class="metric-label">${metric.label}</span>
-        </div>
-      </div>
-    `;
-  });
+function injectReverseEngineeringProject() {
+  const reverseEngineeringProj = {
+    id: "reverse-engineering",
+    title: "Reverse Engineering & Digital Prototyping",
+    tagline: "Metrology, CAD Reconstruction & DfAM Optimization (Femlogic Technologies)",
+    category: "Reverse Engineering",
+    description: "Captured geometric data of physical parts using precision metrology tools (calipers, thread gauges). Reconstructed parts into fully editable parametric 3D models and verified assemblies clearances, optimizing tolerances for FDM 3D printing.",
+    longDescription: "Performed dimensional inspection, parametric CAD modeling, and print optimization for legacy components at Femlogic Technologies. Capturing geometric data of physical parts using metrology tools allowed for high-fidelity parametric reconstruction of physical assemblies. Verified tolerances and clearances, and modified parameters to optimize FDM printing parameters (reducing print time while maintaining structural load paths). Verified fit and tolerances by assembling physical parts.",
+    image: "assets/cad-models/2025-05-04_1738687165f52.webp",
+    technologies: ["Metrology", "Parametric CAD", "Tolerance Analysis", "FDM Printing", "Fusion 360"],
+    github: "https://github.com/Nandhu2036",
+    demo: null,
+    pdf: "assets/internships/Femlogic_Intern_report.pdf",
+    gallery: [
+      "assets/cad-models/2025-05-04_1738687165f52.webp",
+      "assets/cad-models/2025-05-04_267afeb45f7158.webp",
+      "assets/cad-models/2025-05-04_51dc53de5821f8.webp"
+    ],
+    featured: true
+  };
+
+  // Add dynamically if not already present
+  if (!PROFILE_DATA.projects.some(p => p.id === "reverse-engineering")) {
+    PROFILE_DATA.projects.push(reverseEngineeringProj);
+  }
 }
 
-function initSnapshot() {
-  const snap = PROFILE_DATA.personal.snapshot;
+/* ==================== 1. ACT 1: HERO 3D VECTOR CANVAS ==================== */
+
+function init3DCanvas() {
+  const canvas = document.getElementById('hero-vector-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const label = document.getElementById('canvas-shape-label');
   
-  document.getElementById('snap-domain').textContent = snap.coreDomain;
-  document.getElementById('snap-learning').textContent = snap.currentlyLearning;
+  let width = canvas.width = canvas.offsetWidth;
+  let height = canvas.height = canvas.offsetHeight;
   
-  // Specializations
-  const specContainer = document.getElementById('snap-specializations');
-  specContainer.innerHTML = '';
-  snap.specializations.forEach(spec => {
-    specContainer.innerHTML += `<span class="snap-tag">${spec}</span>`;
+  window.addEventListener('resize', () => {
+    if (canvas.offsetWidth > 0) {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    }
   });
+
+  // Programmatic shape generators
+  function generateGear() {
+    let vertices = [];
+    let edges = [];
+    let numTeeth = 16;
+    let rInner = 0.55;
+    let rOuter = 0.85;
+    let depth = 0.35;
+    
+    // Generate teeth nodes
+    for (let i = 0; i < numTeeth * 2; i++) {
+      let angle = (i / (numTeeth * 2)) * Math.PI * 2;
+      let r = (i % 2 === 0) ? rInner : rOuter;
+      let cos = Math.cos(angle);
+      let sin = Math.sin(angle);
+      
+      // Front teeth edge ring
+      vertices.push({x: cos * r, y: sin * r, z: -depth});
+      // Back teeth edge ring
+      vertices.push({x: cos * r, y: sin * r, z: depth});
+    }
+    
+    // Generate linkages
+    let count = numTeeth * 4;
+    for (let i = 0; i < count; i += 2) {
+      let next = (i + 2) % count;
+      edges.push([i, next]); // Front face connector
+      edges.push([i + 1, next + 1]); // Back face connector
+      edges.push([i, i + 1]); // Extrusion side connector
+    }
+    return { vertices, edges };
+  }
+
+  function generateExplodedProduct() {
+    let vertices = [];
+    let edges = [];
+    let segments = 12;
+    let r1 = 0.65;
+    let r2 = 0.45;
+    
+    // Front half cylinder
+    for (let i = 0; i < segments; i++) {
+      let angle = (i / segments) * Math.PI * 2;
+      vertices.push({x: Math.cos(angle) * r1, y: Math.sin(angle) * r1, z: -1.0});
+      vertices.push({x: Math.cos(angle) * r1, y: Math.sin(angle) * r1, z: -0.4});
+    }
+    // Back half cylinder
+    for (let i = 0; i < segments; i++) {
+      let angle = (i / segments) * Math.PI * 2;
+      vertices.push({x: Math.cos(angle) * r2, y: Math.sin(angle) * r2, z: 0.4});
+      vertices.push({x: Math.cos(angle) * r2, y: Math.sin(angle) * r2, z: 1.0});
+    }
+    
+    // Connections front
+    for (let i = 0; i < segments * 2; i += 2) {
+      let next = (i + 2) % (segments * 2);
+      edges.push([i, next]);
+      edges.push([i + 1, next + 1]);
+      edges.push([i, i + 1]);
+    }
+    // Connections back
+    let offset = segments * 2;
+    for (let i = 0; i < segments * 2; i += 2) {
+      let next = (i + 2) % (segments * 2);
+      edges.push([offset + i, offset + next]);
+      edges.push([offset + i + 1, offset + next + 1]);
+      edges.push([offset + i, offset + i + 1]);
+    }
+    // Exploded axle center line
+    vertices.push({x: 0, y: 0, z: -1.3});
+    vertices.push({x: 0, y: 0, z: 1.3});
+    edges.push([vertices.length - 2, vertices.length - 1]);
+    
+    return { vertices, edges };
+  }
+
+  function generateCADMesh() {
+    let vertices = [];
+    let edges = [];
+    let size1 = 0.8;
+    let size2 = 0.4;
+    
+    // Outer cube vertices
+    vertices.push({x: -size1, y: -size1, z: -size1});
+    vertices.push({x: size1, y: -size1, z: -size1});
+    vertices.push({x: size1, y: size1, z: -size1});
+    vertices.push({x: -size1, y: size1, z: -size1});
+    vertices.push({x: -size1, y: -size1, z: size1});
+    vertices.push({x: size1, y: -size1, z: size1});
+    vertices.push({x: size1, y: size1, z: size1});
+    vertices.push({x: -size1, y: size1, z: size1});
+    
+    // Inner cube vertices
+    vertices.push({x: -size2, y: -size2, z: -size2});
+    vertices.push({x: size2, y: -size2, z: -size2});
+    vertices.push({x: size2, y: size2, z: -size2});
+    vertices.push({x: -size2, y: size2, z: -size2});
+    vertices.push({x: -size2, y: -size2, z: size2});
+    vertices.push({x: size2, y: -size2, z: size2});
+    vertices.push({x: size2, y: size2, z: size2});
+    vertices.push({x: -size2, y: size2, z: size2});
+    
+    // Connections outer
+    edges.push([0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]);
+    // Connections inner
+    edges.push([8,9],[9,10],[10,11],[11,8],[12,13],[13,14],[14,15],[15,12],[8,12],[9,13],[10,14],[11,15]);
+    // Connect outer to inner corners
+    for (let i = 0; i < 8; i++) {
+      edges.push([i, i + 8]);
+    }
+    
+    return { vertices, edges };
+  }
+
+  function generateLattice() {
+    let vertices = [];
+    let edges = [];
+    let size = 0.75;
+    
+    // Space frame nodal grid
+    for (let x of [-size, 0, size]) {
+      for (let y of [-size, 0, size]) {
+        for (let z of [-size, 0, size]) {
+          vertices.push({x, y, z});
+        }
+      }
+    }
+    
+    // Connect elements based on distance metric
+    let len = vertices.length;
+    for (let i = 0; i < len; i++) {
+      for (let j = i + 1; j < len; j++) {
+        let dx = Math.abs(vertices[i].x - vertices[j].x);
+        let dy = Math.abs(vertices[i].y - vertices[j].y);
+        let dz = Math.abs(vertices[i].z - vertices[j].z);
+        let dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        if (dist > 0.05 && dist < size * 1.05) {
+          edges.push([i, j]);
+        }
+      }
+    }
+    return { vertices, edges };
+  }
+
+  // Pre-generate shape datasets
+  const shapesData = [
+    { name: "Gear Assembly", data: generateGear() },
+    { name: "Exploded Product", data: generateExplodedProduct() },
+    { name: "CAD Wireframe Mesh", data: generateCADMesh() },
+    { name: "TPMS Space Lattice", data: generateLattice() }
+  ];
   
-  // Open To Options
-  const openContainer = document.getElementById('snap-opento');
-  openContainer.innerHTML = '';
-  snap.openTo.forEach(item => {
-    openContainer.innerHTML += `<span class="snap-list-item">${item}</span>`;
-  });
+  let activeShapeIdx = 0;
+  let currentShape = shapesData[activeShapeIdx];
+  let rotX = 0.5, rotY = 0.5, rotZ = 0.1;
+  let scale = Math.min(width, height) * 0.35;
+  let opacity = 1.0;
+  let fadeState = 'in'; // 'in', 'stable', 'out'
+  let transitionTimer = 0;
+
+  // Cycle shapes every 4.5 seconds
+  setInterval(() => {
+    fadeState = 'out';
+  }, 4500);
+
+  function rotate3D(point, rx, ry, rz) {
+    let cosX = Math.cos(rx), sinX = Math.sin(rx);
+    let y1 = point.y * cosX - point.z * sinX;
+    let z1 = point.y * sinX + point.z * cosX;
+    
+    let cosY = Math.cos(ry), sinY = Math.sin(ry);
+    let x2 = point.x * cosY + z1 * sinY;
+    let z2 = -point.x * sinY + z1 * cosY;
+    
+    let cosZ = Math.cos(rz), sinZ = Math.sin(rz);
+    let x3 = x2 * cosZ - y1 * sinZ;
+    let y3 = x2 * sinZ + y1 * cosZ;
+    
+    return { x: x3, y: y3, z: z2 };
+  }
+
+  function drawLoop() {
+    ctx.clearRect(0, 0, width, height);
+    
+    // Apply viewport scale calculations
+    scale = Math.min(width, height) * 0.35;
+    
+    // Draw viewport circular blueprint markings
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(width/2, height/2, scale * 1.25, 0, Math.PI*2);
+    ctx.arc(width/2, height/2, scale * 0.6, 0, Math.PI*2);
+    ctx.stroke();
+    
+    // Crosshairs
+    ctx.beginPath();
+    ctx.moveTo(width/2 - scale * 1.4, height/2);
+    ctx.lineTo(width/2 + scale * 1.4, height/2);
+    ctx.moveTo(width/2, height/2 - scale * 1.4);
+    ctx.lineTo(width/2, height/2 + scale * 1.4);
+    ctx.stroke();
+
+    // Rotate angles slightly
+    rotX += 0.006;
+    rotY += 0.008;
+    rotZ += 0.003;
+
+    // Handle Opacity Fading logic
+    if (fadeState === 'out') {
+      opacity -= 0.05;
+      if (opacity <= 0.0) {
+        opacity = 0.0;
+        activeShapeIdx = (activeShapeIdx + 1) % shapesData.length;
+        currentShape = shapesData[activeShapeIdx];
+        label.textContent = currentShape.name;
+        fadeState = 'in';
+      }
+    } else if (fadeState === 'in') {
+      opacity += 0.05;
+      if (opacity >= 1.0) {
+        opacity = 1.0;
+        fadeState = 'stable';
+      }
+    }
+
+    const vertices = currentShape.data.vertices;
+    const edges = currentShape.data.edges;
+    const projectedPoints = [];
+
+    // Project points
+    vertices.forEach(v => {
+      let r = rotate3D(v, rotX, rotY, rotZ);
+      // Perspective factor
+      let factor = 2.8 / (2.8 - r.z);
+      let cx = width/2 + r.x * scale * factor;
+      let cy = height/2 + r.y * scale * factor;
+      projectedPoints.push({ x: cx, y: cy });
+    });
+
+    // Draw edges
+    ctx.strokeStyle = `rgba(37, 99, 235, ${0.45 * opacity})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    edges.forEach(e => {
+      let p1 = projectedPoints[e[0]];
+      let p2 = projectedPoints[e[1]];
+      if (p1 && p2) {
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+      }
+    });
+    ctx.stroke();
+
+    // Draw vertex dots
+    ctx.fillStyle = `rgba(14, 165, 233, ${0.85 * opacity})`;
+    projectedPoints.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(drawLoop);
+  }
+
+  // Start loop
+  drawLoop();
 }
 
-function initCommandCenter() {
-  const cc = PROFILE_DATA.commandCenter;
+/* ==================== 2. ACT 2: BENTO PROJECT SHOWCASE ==================== */
+
+function initProjects() {
+  const container = document.getElementById('projects-bento-grid');
+  if (!container) return;
+  container.innerHTML = '';
   
-  // Current Focus List
-  const focusContainer = document.getElementById('focus-container');
-  focusContainer.innerHTML = '';
-  cc.currentFocus.forEach(focus => {
-    focusContainer.innerHTML += `
-      <div class="focus-item">
-        <div class="focus-icon-box">
-          <span class="material-symbols-outlined">${focus.icon}</span>
+  // Bento order
+  const order = ['ecofloat', 'solar-tracker', 'reverse-engineering', 'seed-spreader', 'hollow-clock', 'aquatic-monitoring'];
+  
+  order.forEach((id, index) => {
+    const proj = PROFILE_DATA.projects.find(p => p.id === id);
+    if (!proj) return;
+    
+    let sizeClass = 'small';
+    if (id === 'ecofloat') sizeClass = 'large';
+    else if (id === 'solar-tracker' || id === 'reverse-engineering') sizeClass = 'medium';
+    
+    // Tech pills slice
+    let techHtml = proj.technologies.slice(0, 3).map(t => `<span class="tech-pill">${t}</span>`).join('');
+    
+    container.innerHTML += `
+      <div class="bento-card ${sizeClass}" data-id="${proj.id}">
+        <div class="bento-img-wrapper">
+          <img src="${proj.image}" alt="${proj.title}" loading="lazy" onerror="this.src='assets/projects/ecofloat_boat.png';">
         </div>
-        <span class="focus-name">${focus.name}</span>
-      </div>
-    `;
-  });
-  
-  // Terminal logs
-  document.getElementById('cc-building-name').textContent = cc.currentlyBuilding.name;
-  document.getElementById('cc-building-desc').textContent = cc.currentlyBuilding.description;
-  document.getElementById('cc-learning').textContent = cc.currentlyLearning.name;
-  document.getElementById('cc-activity').textContent = cc.latestActivity.name;
-  document.getElementById('cc-goal').textContent = cc.upcomingGoal.name;
-}
-
-function initJourney() {
-  const timelineContainer = document.getElementById('timeline-container');
-  timelineContainer.innerHTML = '';
-  
-  PROFILE_DATA.journey.forEach((milestone, idx) => {
-    timelineContainer.innerHTML += `
-      <div class="timeline-node" data-index="${idx}">
-        <div class="node-bullet"></div>
-        <div class="node-year">${milestone.year}</div>
-        <div class="node-card">
-          <h4>${milestone.title}</h4>
-          <div class="node-institution">${milestone.institution}</div>
-          <div class="node-click-tip">
-            <span class="material-symbols-outlined" style="font-size:14px;">visibility</span>
-            <span>Click to explore records & milestones</span>
+        <div class="bento-info">
+          <span class="bento-cat">${proj.category}</span>
+          <h3 class="bento-title">${proj.title}</h3>
+          <p class="bento-desc">${proj.description}</p>
+          <div class="bento-techs">
+            ${techHtml}
           </div>
         </div>
+        <span class="material-symbols-outlined bento-arrow">arrow_outward</span>
       </div>
     `;
   });
-
-  // Timeline node click to open details slide drawer
-  const nodes = timelineContainer.querySelectorAll('.timeline-node');
-  nodes.forEach(node => {
-    node.addEventListener('click', () => {
-      const idx = node.getAttribute('data-index');
-      openTimelineDrawer(PROFILE_DATA.journey[idx]);
-      
-      // Highlight active node
-      nodes.forEach(n => n.classList.remove('active'));
-      node.classList.add('active');
-    });
-  });
-}
-
-function openTimelineDrawer(milestone) {
-  const drawer = document.getElementById('timeline-detail-drawer');
-  const content = document.getElementById('drawer-content');
   
-  const icon = milestone.type === 'internship' ? 'business_center' : 'school';
-  
-  let milestonesHtml = '';
-  milestone.milestones.forEach(m => {
-    milestonesHtml += `<div class="drawer-milestone-item">${m}</div>`;
-  });
-
-  content.innerHTML = `
-    <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px;">
-      <span class="material-symbols-outlined text-indigo" style="font-size:32px;">${icon}</span>
-      <div>
-        <h3>${milestone.title}</h3>
-        <div class="drawer-subtitle">${milestone.institution} // ${milestone.year}</div>
+  // Bento Empty slot: CTA card leading to Verification Vault
+  container.innerHTML += `
+    <div class="bento-card cta-card" onclick="document.getElementById('verification').scrollIntoView({behavior:'smooth'})">
+      <div class="bento-cta-content">
+        <div>
+          <span class="bento-cat" style="color:var(--accent-secondary);">Credentials & Archives</span>
+          <h3 class="bento-title" style="margin-top:4px;">Verification Center</h3>
+          <p class="bento-desc" style="-webkit-line-clamp: 3;">Validate academic reports, industrial credentials, and explore the complete library of 28+ CAD engineering exercises.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-family:var(--font-subheadings); font-size:0.75rem; font-weight:600; color:var(--text-primary);">
+          <span>Launch Vault</span>
+          <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+        </div>
       </div>
-    </div>
-    
-    <p>${milestone.details}</p>
-    
-    <div class="drawer-milestones">
-      <h4 class="section-subtitle" style="font-size:0.75rem; margin-bottom:12px;">Key Milestones & Achievements</h4>
-      ${milestonesHtml}
     </div>
   `;
   
-  drawer.classList.add('active');
-}
-
-function initSkills() {
-  const skillsContainer = document.getElementById('skills-dashboard-container');
-  skillsContainer.innerHTML = '';
-  
-  PROFILE_DATA.skills.forEach(cat => {
-    let listHtml = '';
-    cat.list.forEach(skill => {
-      const badgeHtml = skill.badge ? `<span class="skill-badge">${skill.badge}</span>` : '';
-      listHtml += `
-        <div class="skill-tag" data-name="${skill.name}">
-          <span class="skill-dot"></span>
-          <span class="skill-name">${skill.name}</span>
-          ${badgeHtml}
-        </div>
-      `;
-    });
-
-    skillsContainer.innerHTML += `
-      <div class="skills-category-card" id="skill-card-${cat.category.replace(/[^a-zA-Z]/g, '')}">
-        <h3>${cat.category}</h3>
-        <div class="skills-list">
-          ${listHtml}
-        </div>
-      </div>
-    `;
-  });
-}
-
-function initProjects() {
-  const featuredContainer = document.getElementById('featured-projects-container');
-  featuredContainer.innerHTML = '';
-  
-  const featured = PROFILE_DATA.projects.filter(p => p.featured);
-  featured.forEach(proj => {
-    let techHtml = '';
-    proj.technologies.forEach(t => {
-      techHtml += `<span class="tech-tag">${t}</span>`;
-    });
-
-    const docLinkHtml = proj.pdf ? `
-      <a href="${proj.pdf}" target="_blank" class="btn-secondary" style="padding:10px 20px; font-size:0.8rem;">
-        <span class="material-symbols-outlined" style="font-size:16px;">description</span> View Report
-      </a>` : '';
-
-    featuredContainer.innerHTML += `
-      <div class="featured-card">
-        <div class="featured-img-side">
-          <img src="${proj.image}" alt="${proj.title}" onerror="this.src='assets/projects/ecofloat_boat.png';">
-          <div class="featured-img-overlay"></div>
-        </div>
-        <div class="featured-details-side">
-          <span class="featured-cat-tag">${proj.category}</span>
-          <h3 class="featured-title">${proj.title}</h3>
-          <div class="featured-tagline">${proj.tagline}</div>
-          <p class="featured-desc">${proj.description}</p>
-          <div class="featured-tech-wrap">
-            ${techHtml}
-          </div>
-          <div class="featured-actions">
-            <button class="btn-primary view-proj-details-btn" data-id="${proj.id}" style="padding:10px 20px; font-size:0.8rem;">
-              <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span> Details
-            </button>
-            ${docLinkHtml}
-          </div>
-        </div>
-      </div>
-    `;
-  });
-
-  document.querySelectorAll('.view-proj-details-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const projId = btn.getAttribute('data-id');
+  // Bento Cards click handlers
+  container.querySelectorAll('.bento-card:not(.cta-card)').forEach(card => {
+    card.addEventListener('click', () => {
+      const projId = card.getAttribute('data-id');
       const project = PROFILE_DATA.projects.find(p => p.id === projId);
       openProjectModal(project);
     });
@@ -255,17 +410,14 @@ function openProjectModal(project) {
   const modal = document.getElementById('project-detail-modal');
   const content = document.getElementById('project-modal-content');
   
-  let techHtml = '';
-  project.technologies.forEach(t => {
-    techHtml += `<span class="tech-tag">${t}</span>`;
-  });
+  let techHtml = project.technologies.map(t => `<span class="tech-pill" style="font-size: 0.72rem; padding:4px 10px;">${t}</span>`).join('');
 
   let galleryHtml = '';
   if (project.gallery && project.gallery.length > 0) {
     project.gallery.forEach(img => {
       galleryHtml += `
-        <div class="proj-gallery-img" onclick="openLightbox('${img}', '${project.title} Detail Visual')">
-          <img src="${img}" alt="Gallery item" onerror="this.parentElement.style.display='none';">
+        <div class="proj-gallery-img" onclick="openLightbox('${img}', '${project.title} Detailed Render')">
+          <img src="${img}" alt="CAD rendering" onerror="this.parentElement.style.display='none';">
         </div>
       `;
     });
@@ -281,479 +433,477 @@ function openProjectModal(project) {
   `;
 
   content.innerHTML = `
-    <span class="featured-cat-tag">${project.category}</span>
+    <span class="bento-cat" style="margin-bottom:8px; display:inline-block;">${project.category}</span>
     <h2>${project.title}</h2>
-    <div class="proj-modal-tagline">${project.tagline}</div>
+    <div class="proj-modal-tagline" style="margin-top:2px;">${project.tagline}</div>
     
     ${galleryHtml ? `
-      <h4 class="section-subtitle" style="font-size:0.75rem; margin-bottom:12px;">Subsystem Blueprints & Renders (Click to zoom)</h4>
+      <h4 class="section-badge" style="font-size:0.65rem; margin-top:24px; margin-bottom:12px;">Component Blueprints & Alternative Angles (Click to zoom)</h4>
       <div class="proj-modal-gallery">${galleryHtml}</div>
     ` : ''}
 
     <p class="proj-modal-desc">${project.longDescription || project.description}</p>
     
     <div class="proj-modal-tech">${techHtml}</div>
-    
     <div class="proj-modal-actions">${actionsHtml}</div>
   `;
   
   modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
-function initInternships() {
-  const container = document.getElementById('internships-container');
+/* ==================== 3. ACT 3: ENGINEERING JOURNEY TIMELINE ==================== */
+
+function initJourney() {
+  const container = document.getElementById('timeline-container');
+  if (!container) return;
   container.innerHTML = '';
   
-  PROFILE_DATA.internships.forEach(intern => {
-    let bulletsHtml = '';
-    intern.responsibilities.forEach(b => {
-      bulletsHtml += `<li>${b}</li>`;
-    });
+  const journeySteps = [
+    {
+      year: "2023",
+      title: "Started Mechanical Engineering",
+      subtitle: "St. Joseph’s College of Engineering, Chennai",
+      icon: "school",
+      details: "Pursued standard mechanical undergraduate curriculum, developing deep analytical knowledge in thermodynamics, materials science, fluid dynamics, and machine design theory.",
+      milestones: [
+        "Synthesized core competencies in mechanical drafting and physics equations.",
+        "Formed design groups focusing on clean-energy CPV solar tracking setups.",
+        "Participated in active university workshops for mechanical systems modeling."
+      ]
+    },
+    {
+      year: "2024",
+      title: "Built Projects & Gained Industrial Experience",
+      subtitle: "K.M. Knitwear Pvt. Ltd. & Core Designs",
+      icon: "precision_manufacturing",
+      details: "Began modeling structural assemblies in CAD, designed regenerative braking control models in MATLAB Simulink, and completed a Production Engineering Internship optimizing packaging assembly layouts by 10%.",
+      milestones: [
+        "Modeled container cargo packaging layouts, reducing downtime processes by 15%.",
+        "Configured active BLDC regenerative braking control loops in MATLAB Simulink.",
+        "Completed 2D mechanical drafting practices in AutoCAD (Limits & Fits systems)."
+      ]
+    },
+    {
+      year: "2025",
+      title: "Competitions, Presentations & Product Design Intern",
+      subtitle: "Niral Hackathon & Femlogic Technologies",
+      icon: "emoji_events",
+      details: "Built the hull design for the Project EcoFloat catamaran, won hackathon awards, and worked as a Product Design Intern at Femlogic contributing to structural thin sheet metal carriage seating for Vande Bharat trains.",
+      milestones: [
+        "Designed the twin-hull catamaran structure and gimbals in Autodesk Fusion 360.",
+        "Co-authored technical reports and pitch decks for autonomous marine platforms.",
+        "Applied professional DFM sheet-metal guidelines for railway seating carriage assemblies."
+      ]
+    },
+    {
+      year: "2026",
+      title: "Reverse Engineering Intern & Research Publications",
+      subtitle: "Femlogic Technologies & SAIL Salem Plant",
+      icon: "analytics",
+      details: "Worked as a Reverse Engineering Intern calibrating tolerances of legacy parts via metrology, completed SAIL steel mill drives inspections, and authored papers on TPMS lattice optimizations.",
+      milestones: [
+        "Inspected physical parts using metrology (micrometers, thread gauges) and generated parametric models.",
+        "Optimized part structures and 3D printing slice parameters (PLA/PETG infill clearances).",
+        "Published academic research papers detailing topological lattice stresses (diamond/gyroid) in COMSOL."
+      ]
+    },
+    {
+      year: "Future Vision",
+      title: "Product Innovation & Advanced Digital Engineering",
+      subtitle: "Hybrid Topologies & Hardware Automation",
+      icon: "rocket_launch",
+      details: "Aims to integrate structural mass topology optimization with automated firmware platforms, scaling marine environmental robotics and deploying hybrid TPMS components into lightweight aerospace assemblies.",
+      milestones: [
+        "Transitioning Project EcoFloat controls nodes to ROS 2 Humble Navigation stacks.",
+        "Exploring non-joint compliant mechanisms (flexure hinges) in Additive Manufacturing.",
+        "Deploying generative design algorithms to optimize load path brackets."
+      ]
+    }
+  ];
 
-    const reportBtn = intern.document ? `
-      <a href="${intern.document}" target="_blank" class="btn-primary" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px;">
-        <span class="material-symbols-outlined" style="font-size:16px;">description</span> Technical Report
-      </a>` : `
-      <div style="display:inline-block; position:relative; margin-right: 8px;">
-        <button onclick="triggerInternshipUpload(this, '${intern.company.replace(/'/g, "\\'")}', 'report')" class="btn-primary upload-fallback-btn" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); color: var(--text-secondary);">
-          <span class="material-symbols-outlined" style="font-size:16px;">upload_file</span> Add Report
-        </button>
-        <input type="file" accept=".pdf,.doc,.docx" style="display:none;" onchange="handleInternshipUpload(event, '${intern.company.replace(/'/g, "\\'")}', 'report', this)">
-      </div>`;
-
-    const certBtn = intern.certificate ? `
-      <button onclick="openCertificateViewer('${intern.certificate}', '${intern.company.replace(/'/g, "\\'")}', 'Internship Cert')" class="btn-secondary" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px;">
-        <span class="material-symbols-outlined" style="font-size:16px;">verified</span> Internship Certificate
-      </button>` : `
-      <div style="display:inline-block; position:relative;">
-        <button onclick="triggerInternshipUpload(this, '${intern.company.replace(/'/g, "\\'")}', 'certificate')" class="btn-secondary upload-fallback-btn" style="padding: 8px 16px; font-size: 0.78rem; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); color: var(--text-secondary);">
-          <span class="material-symbols-outlined" style="font-size:16px;">upload_file</span> Add Certificate
-        </button>
-        <input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" style="display:none;" onchange="handleInternshipUpload(event, '${intern.company.replace(/'/g, "\\'")}', 'certificate', this)">
-      </div>`;
-
+  journeySteps.forEach((step, index) => {
+    let milestonesHtml = step.milestones.map(m => `<li>${m}</li>`).join('');
     container.innerHTML += `
-      <div class="internship-card">
-        <div class="intern-header">
-          <div class="intern-title-group">
-            <div class="intern-icon-box">
-              <span class="material-symbols-outlined">${intern.logo}</span>
-            </div>
+      <div class="journey-node" id="journey-node-${index}">
+        <div class="journey-bullet"></div>
+        <span class="node-year-badge">${step.year}</span>
+        <div class="node-content-card">
+          <div class="node-header">
             <div>
-              <h3 class="intern-role">${intern.role}</h3>
-              <div class="intern-company">${intern.company} // ${intern.division}</div>
+              <h4 class="node-title">${step.title}</h4>
+              <div class="node-subtitle">${step.subtitle}</div>
             </div>
+            <span class="material-symbols-outlined node-type-icon">${step.icon}</span>
           </div>
-          <span class="intern-date">${intern.duration}</span>
-        </div>
-        
-        <div class="intern-body-grid">
-          <div class="intern-bullets-col">
-            <h4>Responsibilities & Projects</h4>
-            <ul>
-              ${bulletsHtml}
-            </ul>
-          </div>
-          
-          <div class="intern-learnings-col">
-            <h4>Engineering Learnings</h4>
-            <div class="learnings-text">
-              ${intern.learnings}
-            </div>
-            <div class="intern-actions">
-              ${reportBtn}
-              ${certBtn}
-            </div>
-          </div>
+          <p class="node-details">${step.details}</p>
+          <ul class="node-milestones-list">
+            ${milestonesHtml}
+          </ul>
         </div>
       </div>
     `;
   });
-}
-
-function initGallery() {
-  const container = document.getElementById('gallery-container');
-  container.innerHTML = '';
   
-  PROFILE_DATA.gallery.forEach(img => {
-    container.innerHTML += `
-      <div class="gallery-item" onclick="openLightbox('${img.filePath}', '${img.title}')">
-        <img src="${img.filePath}" alt="${img.title}" loading="lazy" onerror="this.parentElement.style.display='none';">
-        <div class="gallery-desc-overlay">
-          <span class="gallery-item-cat">${img.category}</span>
-          <div class="gallery-item-title">${img.title}</div>
-          <div class="gallery-item-desc">${img.desc}</div>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function initBeyondResume() {
-  const container = document.getElementById('beyond-feed-container');
-  container.innerHTML = '';
+  // Intersection Observer for Journey Timeline node fade-in reveal
+  const nodes = container.querySelectorAll('.journey-node');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   
-  PROFILE_DATA.beyondResume.forEach(item => {
-    container.innerHTML += `
-      <div class="beyond-card">
-        <div class="beyond-meta">
-          <span class="beyond-tag">${item.tag}</span>
-          <span class="beyond-status">${item.status}</span>
-        </div>
-        <div>
-          <h3>${item.title}</h3>
-          <p>${item.description}</p>
-        </div>
-      </div>
-    `;
-  });
+  nodes.forEach(node => observer.observe(node));
 }
 
-function initGitHubDashboard() {
-  fetchGitHubData().then(data => {
-    document.getElementById('github-avatar').src = data.profile.avatarUrl;
-    document.getElementById('github-repo-count').textContent = data.profile.publicRepos;
-    document.getElementById('github-followers').textContent = data.profile.followers;
-    
-    const chart = document.getElementById('github-languages-chart');
-    chart.innerHTML = '';
-    
-    const colors = {
-      "Python": "#3572A5",
-      "C++": "#f34b7d",
-      "MATLAB": "#e16737",
-      "HTML": "#e34c26",
-      "JavaScript": "#f1e05a",
-      "CSS": "#563d7c"
-    };
+/* ==================== 4. ACT 4: ENGINEERING ECOSYSTEM ==================== */
 
-    Object.keys(data.languages).forEach(lang => {
-      const frequency = data.languages[lang];
-      const color = colors[lang] || "#8b949e";
-      chart.innerHTML += `
-        <div class="lang-pill-metric">
-          <span class="lang-color-indicator" style="background-color: ${color};"></span>
-          <span>${lang} (${frequency})</span>
+function initEcosystem() {
+  // Identity Domains
+  const identityContainer = document.getElementById('identity-cards');
+  if (identityContainer) {
+    identityContainer.innerHTML = `
+      <div class="identity-card">
+        <div class="identity-card-header">
+          <span class="material-symbols-outlined identity-card-icon">layers</span>
+          <h4 class="identity-card-title">Product Design & DFM</h4>
+        </div>
+        <p class="identity-card-desc">Translating physical concepts into manufacturing assemblies. Competency in parametric CAD modeling (Fusion 360, SolidWorks, Siemens NX), tolerance stack analysis, limits & fits, and sheet metal manufacturing.</p>
+      </div>
+      <div class="identity-card">
+        <div class="identity-card-header">
+          <span class="material-symbols-outlined identity-card-icon">3d_rotation</span>
+          <h4 class="identity-card-title">Additive Manufacturing & DfAM</h4>
+        </div>
+        <p class="identity-card-desc">Designing specifically for FDM 3D printing. Experience in print orientation optimization, thermal shrinkage compensation, infill pattern stresses (PLA/PETG), and hybrid TPMS lattice structures.</p>
+      </div>
+      <div class="identity-card">
+        <div class="identity-card-header">
+          <span class="material-symbols-outlined identity-card-icon">memory</span>
+          <h4 class="identity-card-title">Automation & Sensor Fusion</h4>
+        </div>
+        <p class="identity-card-desc">Integrating controls firmware with mechanical hardware. Experienced in ROS/ROS 2 robot nodes, Arduino controllers, stepper motor microstepping calibration, and serial telemetry integrations.</p>
+      </div>
+    `;
+  }
+
+  // Skill Network
+  const skillsContainer = document.getElementById('skills-container');
+  if (skillsContainer) {
+    skillsContainer.innerHTML = '';
+    PROFILE_DATA.skills.forEach(cat => {
+      let tagsHtml = cat.list.map(s => `<span class="skill-tag-item">${s.name}</span>`).join('');
+      skillsContainer.innerHTML += `
+        <div class="skill-group">
+          <h4 class="skill-group-name">${cat.category}</h4>
+          <div class="skill-tags-wrap">
+            ${tagsHtml}
+          </div>
         </div>
       `;
     });
+  }
 
-    const reposContainer = document.getElementById('github-repos-container');
-    reposContainer.innerHTML = '';
-    
-    data.repos.forEach(repo => {
-      const color = colors[repo.language] || "#8b949e";
-      reposContainer.innerHTML += `
-        <a href="${repo.url}" target="_blank" class="gh-repo-card">
-          <div class="gh-repo-header">
-            <span class="gh-repo-name">${repo.name}</span>
-            <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span>
-          </div>
-          <p>${repo.description}</p>
-          <div class="gh-repo-footer">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span class="lang-color-indicator" style="background-color: ${color};"></span>
-              <span>${repo.language}</span>
-            </div>
-            <div class="gh-repo-meta">
-              <span class="gh-repo-meta-item">
-                <span class="material-symbols-outlined" style="font-size:12px;">star</span> ${repo.stars}
-              </span>
-              <span class="gh-repo-meta-item">
-                <span class="material-symbols-outlined" style="font-size:12px;">alt_route</span> ${repo.forks}
-              </span>
-            </div>
-          </div>
-        </a>
-      `;
-    });
-  });
+  // Live Status Board
+  const statusContainer = document.getElementById('status-container');
+  if (statusContainer) {
+    statusContainer.innerHTML = `
+      <div class="status-card">
+        <div class="status-indicator">
+          <span class="pulse-dot green"></span>
+          <span style="color: var(--accent-success);">Current Project</span>
+        </div>
+        <h4 class="status-name">${PROFILE_DATA.commandCenter.currentlyBuilding.name}</h4>
+        <p class="status-detail">${PROFILE_DATA.commandCenter.currentlyBuilding.description} - ${PROFILE_DATA.commandCenter.currentlyBuilding.status}</p>
+      </div>
+      <div class="status-card">
+        <div class="status-indicator">
+          <span class="pulse-dot yellow"></span>
+          <span style="color: var(--accent-warn);">Current Learning</span>
+        </div>
+        <h4 class="status-name">${PROFILE_DATA.commandCenter.currentlyLearning.name}</h4>
+        <p class="status-detail">${PROFILE_DATA.commandCenter.currentlyLearning.detail}</p>
+      </div>
+      <div class="status-card">
+        <div class="status-indicator">
+          <span class="pulse-dot blue"></span>
+          <span style="color: var(--accent-secondary);">Current Experiment</span>
+        </div>
+        <h4 class="status-name">3D Printed Compliant Mechanisms</h4>
+        <p class="status-detail">Modeling zero-friction flexure joints and non-assembly compliant triggers in Fusion 360 for high-durability print assemblies.</p>
+      </div>
+      <div class="status-card">
+        <div class="status-indicator">
+          <span class="pulse-dot purple"></span>
+          <span style="color: var(--accent-explore);">Current Exploration</span>
+        </div>
+        <h4 class="status-name">${PROFILE_DATA.commandCenter.upcomingGoal.name}</h4>
+        <p class="status-detail">${PROFILE_DATA.commandCenter.upcomingGoal.detail}</p>
+      </div>
+    `;
+  }
 }
 
-/* ==================== 2. KNOWLEDGE ARCHIVE EXPLORER Logic (Tabbed T3) ==================== */
+/* ==================== 5. ACT 5: TRUST & CONNECT (VERIFICATION CENTER) ==================== */
 
-function initArchiveExplorer() {
-  const tabs = document.querySelectorAll('.archive-tab-btn');
-  const searchInput = document.getElementById('archive-sidebar-search');
-
-  // Render initial tab (designs)
-  switchArchiveTab('designs');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+function initVerificationCenter() {
+  const tabs = document.querySelectorAll('.vault-tab-btn');
+  const searchInput = document.getElementById('vault-search-input');
+  if (!tabs.length || !searchInput) return;
+  
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
       
-      const tabName = tab.getAttribute('data-tab');
-      switchArchiveTab(tabName);
-    });
-  });
-
-  searchInput.addEventListener('input', () => {
-    filterArchiveData();
-  });
-
-  // Open modal triggers
-  const openArchiveBtn = document.getElementById('open-archive-btn');
-  const openArchiveVisual = document.getElementById('open-archive-visual-trigger');
-  
-  const openArchive = () => {
-    const modal = document.getElementById('archive-explorer-modal');
-    if (modal) {
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      // Refresh active tab layout when opened
-      switchArchiveTab(activeArchiveTab);
-    }
-  };
-
-  if (openArchiveBtn) openArchiveBtn.addEventListener('click', openArchive);
-  if (openArchiveVisual) openArchiveVisual.addEventListener('click', openArchive);
-
-  // Catch navbar / header Archive links
-  const archiveLinks = document.querySelectorAll('a[href="#archive-explorer"]');
-  archiveLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      openArchive();
-    });
-  });
-}
-
-function switchArchiveTab(tabName) {
-  activeArchiveTab = tabName;
-  selectedFilter = 'all';
-  
-  // Hide all panels, show the active one
-  const panes = document.querySelectorAll('.archive-tab-pane');
-  panes.forEach(pane => pane.classList.remove('active'));
-  document.getElementById(`pane-${tabName}`).classList.add('active');
-
-  // Reset search input
-  document.getElementById('archive-sidebar-search').value = '';
-
-  // Render contextual filters in the sidebar
-  initArchiveFilters();
-  
-  // Render active dataset
-  filterArchiveData();
-
-  // Special view controllers for certificates chronology toggling
-  if (tabName === 'certificates') {
-    initCertViewToggles();
-  }
-}
-
-function initArchiveFilters() {
-  const widget = document.getElementById('sidebar-filters-widget');
-  widget.innerHTML = '';
-
-  let title = 'Categories';
-  let filters = [];
-
-  if (activeArchiveTab === 'designs') {
-    title = 'CAD Vault Subcategories';
-    let filtersHtml = `<div class="sidebar-filter-item ${selectedFilter === 'all' ? 'active' : ''}" data-filter="all">
-      <span>Show All Designs</span>
-    </div>`;
-
-    const designGroups = {
-      "Practice Parts": ["Exercises 1-28", "Daily Challenges"],
-      "Mechanical Assemblies": ["Engines", "Mechanisms", "Heavy Equipment"],
-      "Projects": ["TPMS", "Research Designs", "Product Concepts"],
-      "Others": ["Scans", "Drafts", "Experimental Models"]
-    };
-
-    for (const [groupName, subCats] of Object.entries(designGroups)) {
-      filtersHtml += `<span class="sidebar-filter-group-header">${groupName}</span>`;
-      subCats.forEach(sub => {
-        filtersHtml += `
-          <div class="sidebar-filter-item sub-item ${selectedFilter === sub ? 'active' : ''}" data-filter="${sub}">
-            <span>${sub}</span>
-          </div>
-        `;
+      const activeTab = btn.getAttribute('data-tab');
+      document.querySelectorAll('.vault-pane').forEach(pane => {
+        pane.classList.remove('active');
       });
-    }
-
-    widget.innerHTML = `
-      <h4>${title}</h4>
-      <div class="sidebar-filter-list">
-        ${filtersHtml}
-      </div>
-    `;
-
-    widget.querySelectorAll('.sidebar-filter-item').forEach(item => {
-      item.addEventListener('click', () => {
-        widget.querySelectorAll('.sidebar-filter-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        selectedFilter = item.getAttribute('data-filter');
-        filterArchiveData();
-      });
+      document.getElementById(`vault-pane-${activeTab}`).classList.add('active');
+      
+      // Clear search input on tab switch
+      searchInput.value = '';
+      runVerificationFilter();
     });
-    return;
-  } else if (activeArchiveTab === 'certificates') {
-    title = 'Categories';
-    const categories = new Set();
-    PROFILE_DATA.certificates.forEach(c => categories.add(c.category));
-    filters = Array.from(categories);
-  } else if (activeArchiveTab === 'presentations') {
-    title = 'Categories';
-    const categories = new Set();
-    PROFILE_DATA.presentations.forEach(p => categories.add(p.category));
-    filters = Array.from(categories);
-  } else if (activeArchiveTab === 'documents') {
-    title = 'Document Type';
-    const types = new Set();
-    PROFILE_DATA.documents.forEach(d => types.add(d.type));
-    filters = Array.from(types);
-  } else if (activeArchiveTab === 'research') {
-    title = 'Boundary Software';
-    const softwares = new Set();
-    PROFILE_DATA.research.forEach(r => softwares.add(r.software.split('&')[0].trim()));
-    filters = Array.from(softwares);
-  }
-
-  let filtersHtml = `<div class="sidebar-filter-item ${selectedFilter === 'all' ? 'active' : ''}" data-filter="all">
-    <span>Show All</span>
-  </div>`;
-
-  filters.forEach(f => {
-    filtersHtml += `
-      <div class="sidebar-filter-item ${selectedFilter === f ? 'active' : ''}" data-filter="${f}">
-        <span>${f}</span>
-      </div>
-    `;
   });
 
-  widget.innerHTML = `
-    <h4>${title}</h4>
-    <div class="sidebar-filter-list">
-      ${filtersHtml}
-    </div>
-  `;
+  searchInput.addEventListener('input', runVerificationFilter);
 
-  widget.querySelectorAll('.sidebar-filter-item').forEach(item => {
-    item.addEventListener('click', () => {
-      widget.querySelectorAll('.sidebar-filter-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      selectedFilter = item.getAttribute('data-filter');
-      filterArchiveData();
+  // Initialize CAD Subcategory buttons
+  initCADSubcategories();
+  
+  // Render initial list
+  runVerificationFilter();
+}
+
+function initCADSubcategories() {
+  const container = document.getElementById('cad-subcategories');
+  if (!container) return;
+  
+  const subcats = [
+    { id: 'all', label: 'All CAD' },
+    { id: 'Practice Parts', label: 'Practice Parts' },
+    { id: 'Mechanical Assemblies', label: 'Assemblies' },
+    { id: 'Projects', label: 'Projects CAD' },
+    { id: 'Others', label: 'Others' }
+  ];
+  
+  container.innerHTML = subcats.map(sc => `
+    <button class="cad-sub-btn ${sc.id === activeCADSubCategory ? 'active' : ''}" data-sub="${sc.id}">
+      ${sc.label}
+    </button>
+  `).join('');
+  
+  container.querySelectorAll('.cad-sub-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.cad-sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCADSubCategory = btn.getAttribute('data-sub');
+      runVerificationFilter();
     });
   });
 }
 
-function filterArchiveData() {
-  const query = document.getElementById('archive-sidebar-search').value.toLowerCase().trim();
-
-  if (activeArchiveTab === 'designs') {
-    const filtered = PROFILE_DATA.cadVault.filter(cad => {
-      const matchesSearch = cad.title.toLowerCase().includes(query) || cad.description.toLowerCase().includes(query) || cad.tags.some(t => t.toLowerCase().includes(query));
-      const matchesFilter = selectedFilter === 'all' || cad.subCategory === selectedFilter || cad.category === selectedFilter;
-      return matchesSearch && matchesFilter;
-    });
-    renderArchiveDesigns(filtered);
-  } else if (activeArchiveTab === 'certificates') {
-    const filtered = PROFILE_DATA.certificates.filter(cert => {
-      const matchesSearch = cert.title.toLowerCase().includes(query) || cert.issuer.toLowerCase().includes(query) || cert.description.toLowerCase().includes(query);
-      const matchesFilter = selectedFilter === 'all' || cert.category === selectedFilter;
-      return matchesSearch && matchesFilter;
-    });
-    renderArchiveCertificates(filtered);
-  } else if (activeArchiveTab === 'presentations') {
-    const filtered = PROFILE_DATA.presentations.filter(pres => {
-      const matchesSearch = pres.title.toLowerCase().includes(query) || pres.description.toLowerCase().includes(query) || pres.tags.some(t => t.toLowerCase().includes(query));
-      const matchesFilter = selectedFilter === 'all' || pres.category === selectedFilter;
-      return matchesSearch && matchesFilter;
-    });
-    renderArchivePresentations(filtered);
-  } else if (activeArchiveTab === 'documents') {
-    const filtered = PROFILE_DATA.documents.filter(doc => {
-      const matchesSearch = doc.title.toLowerCase().includes(query) || doc.description.toLowerCase().includes(query) || doc.software.toLowerCase().includes(query);
-      const matchesFilter = selectedFilter === 'all' || doc.type === selectedFilter;
-      return matchesSearch && matchesFilter;
-    });
-    renderArchiveDocuments(filtered);
-  } else if (activeArchiveTab === 'research') {
-    const filtered = PROFILE_DATA.research.filter(res => {
-      const matchesSearch = res.title.toLowerCase().includes(query) || res.description.toLowerCase().includes(query) || res.software.toLowerCase().includes(query);
-      const matchesFilter = selectedFilter === 'all' || res.software.includes(selectedFilter);
-      return matchesSearch && matchesFilter;
-    });
-    renderArchiveResearch(filtered);
+function runVerificationFilter() {
+  const activeTabBtn = document.querySelector('.vault-tab-btn.active');
+  if (!activeTabBtn) return;
+  const activeTab = activeTabBtn.getAttribute('data-tab');
+  const query = document.getElementById('vault-search-input').value.toLowerCase().trim();
+  
+  if (activeTab === 'certificates') {
+    renderVaultCertificates(query);
+  } else if (activeTab === 'reports') {
+    renderVaultReports(query);
+  } else if (activeTab === 'cad') {
+    renderVaultCADModels(activeCADSubCategory, query);
   }
 }
 
-function isCADFile(path) {
-  if (!path) return false;
-  const lower = path.toLowerCase();
-  return lower.endsWith('.f3d') || lower.endsWith('.stl') || lower.endsWith('.step');
-}
-
-// 1. Designs Render with viewpoints slideshow
-function renderArchiveDesigns(items) {
-  const grid = document.getElementById('explorer-designs-grid');
+function renderVaultCertificates(query) {
+  const grid = document.getElementById('vault-certs-grid');
+  if (!grid) return;
   grid.innerHTML = '';
+  
+  const filtered = PROFILE_DATA.certificates.filter(c => {
+    return c.title.toLowerCase().includes(query) || 
+           c.issuer.toLowerCase().includes(query) || 
+           c.tags.some(t => t.toLowerCase().includes(query));
+  });
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-secondary);">No certificates match query.</div>`;
+    return;
+  }
+  
+  filtered.forEach(c => {
+    const filePath = `assets/certificates/${c.fileName}`;
+    grid.innerHTML += `
+      <div class="cert-card" onclick="openCertificateViewer('${filePath}', '${c.title}')">
+        <div>
+          <span class="cert-meta">${c.issuer}</span>
+          <h4 class="cert-title">${c.title}</h4>
+          <p class="cert-issuer" style="font-size:0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top:6px; color: var(--text-secondary);">${c.description}</p>
+        </div>
+        <div class="cert-actions">
+          <span class="cert-date">${c.date}</span>
+          <span class="cert-btn">
+            <span class="material-symbols-outlined" style="font-size:14px;">visibility</span>
+            <span>Verify</span>
+          </span>
+        </div>
+      </div>
+    `;
+  });
+}
 
-  if (items.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 0; color:var(--text-secondary);">No designs match filters.</div>`;
+function renderVaultReports(query) {
+  const tbody = document.getElementById('vault-reports-table');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  
+  const reportsList = [];
+  
+  // Core research papers
+  PROFILE_DATA.research.forEach(r => {
+    reportsList.push({
+      title: r.title,
+      software: r.software,
+      size: r.fileSize,
+      filePath: r.filePath,
+      description: r.description,
+      type: "Research Paper"
+    });
+  });
+  
+  // Internship reports
+  PROFILE_DATA.internships.forEach(i => {
+    if (i.document) {
+      reportsList.push({
+        title: `${i.company} Internship Report`,
+        software: "Technical Report",
+        size: "20+ MB",
+        filePath: i.document,
+        description: i.learnings,
+        type: "Internship Doc"
+      });
+    }
+  });
+
+  // Project reports
+  PROFILE_DATA.projects.forEach(p => {
+    if (p.pdf) {
+      reportsList.push({
+        title: `${p.title} - Technical Report`,
+        software: p.technologies.slice(0, 2).join(', '),
+        size: "PDF Specs",
+        filePath: p.pdf,
+        description: p.tagline,
+        type: "Project Report"
+      });
+    }
+  });
+
+  const filtered = reportsList.filter(r => {
+    return r.title.toLowerCase().includes(query) || 
+           r.software.toLowerCase().includes(query) || 
+           r.description.toLowerCase().includes(query);
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-secondary);">No documents match query.</td></tr>`;
     return;
   }
 
-  items.forEach(cad => {
-    let tagsHtml = '';
-    cad.tags.forEach(t => {
-      tagsHtml += `<span class="tech-tag">${t}</span>`;
+  filtered.forEach(doc => {
+    tbody.innerHTML += `
+      <tr>
+        <td>
+          <div class="vault-doc-title">${doc.title}</div>
+          <div class="vault-doc-desc">${doc.description}</div>
+        </td>
+        <td>${doc.software}</td>
+        <td>${doc.size}</td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <button onclick="openCertificateViewer('${doc.filePath}', '${doc.title}')" class="btn-primary" style="padding: 8px 12px; font-size: 0.72rem; border-radius: 6px;">
+              <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span>
+            </button>
+            <a href="${doc.filePath}" download class="btn-secondary" style="padding: 8px 12px; font-size: 0.72rem; border-radius: 6px;">
+              <span class="material-symbols-outlined" style="font-size: 14px;">download</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function renderVaultCADModels(activeSubcat, query) {
+  const grid = document.getElementById('vault-cad-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  let filtered = PROFILE_DATA.cadVault;
+  
+  if (activeSubcat !== 'all') {
+    filtered = filtered.filter(c => c.category === activeSubcat);
+  }
+  
+  if (query.length > 0) {
+    filtered = filtered.filter(c => {
+      return c.title.toLowerCase().includes(query) || 
+             c.description.toLowerCase().includes(query) || 
+             c.software.toLowerCase().includes(query) ||
+             c.tags.some(t => t.toLowerCase().includes(query));
     });
+  }
 
-    const crossLinkHtml = cad.relatedContent ? `
-      <div class="meta-row">
-        <span>Related Content:</span>
-        <span onclick="triggerCrossLink('${cad.relatedContent.link}')" class="crosslink-tag">${cad.relatedContent.text}</span>
-      </div>` : '';
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-secondary);">No CAD models match filters.</div>`;
+    return;
+  }
 
-    const downloadBtnHtml = cad.cadSource ? `
-      <div class="meta-row" style="margin-top: 6px;">
-        <span>Source CAD Model:</span>
-        <a href="${cad.cadSource}" download class="crosslink-tag" style="display:inline-flex; align-items:center; gap:4px; color:var(--accent-primary); border-color:var(--accent-primary); cursor:pointer; text-decoration:none;">
-          <span class="material-symbols-outlined" style="font-size:12px;">download</span> Download ${cad.cadSource.split('.').pop().toUpperCase()}
+  filtered.forEach(c => {
+    let downloadBtn = '';
+    if (c.cadSource) {
+      downloadBtn = `
+        <a href="${c.cadSource}" download class="cad-link-btn">
+          <span class="material-symbols-outlined" style="font-size:12px;">download</span>
+          <span>Download CAD</span>
         </a>
-      </div>` : '';
-
-    let previewImgSrc = cad.filePath || 'assets/projects/fig-2.png';
-    let fallbackImgSrc = 'assets/projects/ecofloat_boat.png';
-    let actionIcon = 'zoom_in';
-    let labelHtml = '';
-
-    if (cad.cadSource) {
-      const ext = cad.cadSource.split('.').pop().toUpperCase();
-      labelHtml = `<div class="vault-source-badge">${ext} MODEL</div>`;
+      `;
+    }
+    
+    let drawingBtn = '';
+    if (c.drawings) {
+      drawingBtn = `
+        <button onclick="openCertificateViewer('${c.drawings}', '${c.title} Blueprints')" class="cad-link-btn" style="background:transparent; border:none; padding:0; cursor:pointer;">
+          <span class="material-symbols-outlined" style="font-size:12px;">picture_as_pdf</span>
+          <span>Drawing</span>
+        </button>
+      `;
     }
 
     grid.innerHTML += `
-      <div class="design-vault-card">
-        <div class="vault-img-box" onclick="openCADLightbox('${cad.id}')">
-          <img src="${previewImgSrc}" alt="${cad.title}" onerror="this.src='${fallbackImgSrc}';">
-          ${labelHtml}
-          <div class="vault-zoom-indicator">
-            <span class="material-symbols-outlined">${actionIcon}</span>
-          </div>
+      <div class="cad-card">
+        <div class="cad-img-box" onclick="openLightbox('${c.filePath}', '${c.title} Render View')">
+          <img src="${c.filePath}" alt="${c.title}" loading="lazy" onerror="this.src='assets/projects/ecofloat_boat.png';">
         </div>
-        <div class="vault-info-box">
-          <div class="vault-info-header" style="margin-bottom:6px;">
-            <span class="vault-tag">${cad.type}</span>
-            <span style="font-size:0.75rem; color:var(--text-secondary);">${cad.date}</span>
+        <div class="cad-info-box">
+          <div>
+            <div class="cad-title-lbl">${c.title}</div>
+            <div class="cad-software-lbl">${c.software} // ${c.subCategory || c.category}</div>
           </div>
-          <h4>${cad.title}</h4>
-          <p>${cad.description}</p>
-          
-          <div class="vault-metadata-footer">
-            <div class="meta-row">
-              <span>Software Used:</span>
-              <span class="text-white font-bold" onclick="focusSkill('${cad.software}')" style="cursor:pointer; text-decoration:underline;">${cad.software}</span>
-            </div>
-            ${crossLinkHtml}
-            ${downloadBtnHtml}
-            <div class="proj-modal-tech" style="margin-bottom:0; margin-top:6px;">${tagsHtml}</div>
+          <div class="cad-action-links">
+            <button onclick="openCADLightbox('${c.id}')" class="cad-link-btn" style="background:transparent; border:none; padding:0; cursor:pointer;">
+              <span class="material-symbols-outlined" style="font-size:12px;">zoom_in</span>
+              <span>Inspect</span>
+            </button>
+            ${drawingBtn}
+            ${downloadBtn}
           </div>
         </div>
       </div>
@@ -761,375 +911,128 @@ function renderArchiveDesigns(items) {
   });
 }
 
-function openCADLightbox(cadId) {
-  const cad = PROFILE_DATA.cadVault.find(c => c.id === cadId);
-  if (!cad) return;
-
-  if (isCADFile(cad.filePath)) {
-    // If it's a CAD source file, we trigger a download!
-    const link = document.createElement('a');
-    link.href = cad.filePath;
-    link.download = cad.filePath.split('/').pop();
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    return;
-  }
+function openCADLightbox(id) {
+  const item = PROFILE_DATA.cadVault.find(c => c.id === id);
+  if (!item) return;
   
-  currentActiveCAD = cad;
+  openLightbox(item.filePath, `${item.title} (${item.software}) - ${item.description}`);
   
   const drawer = document.getElementById('lightbox-viewpoints-drawer');
   const container = document.getElementById('lightbox-viewpoints-container');
   
-  if (cad.viewpoints && cad.viewpoints.length > 0) {
+  if (item.viewpoints && item.viewpoints.length > 0) {
     drawer.style.display = 'block';
-    container.innerHTML = '';
-    cad.viewpoints.forEach((v, idx) => {
-      container.innerHTML += `
-        <div class="viewpoint-thumb ${idx === 0 ? 'active' : ''}" onclick="switchViewpoint('${v}', this)">
-          <img src="${v}" alt="Viewpoint angle" onerror="this.src='assets/projects/ecofloat_boat.png';">
-        </div>
-      `;
-    });
+    container.innerHTML = item.viewpoints.map((vp, index) => `
+      <div class="vp-thumb ${vp === item.filePath ? 'active' : ''}" onclick="changeLightboxImage('${vp}', this)">
+        <img src="${vp}" alt="View ${index}">
+      </div>
+    `).join('');
   } else {
     drawer.style.display = 'none';
   }
-
-  openLightbox(cad.filePath, cad.title);
 }
 
-function switchViewpoint(filePath, thumbNode) {
-  document.getElementById('lightbox-img').src = filePath;
+function changeLightboxImage(src, element) {
+  document.getElementById('lightbox-img').src = src;
+  document.querySelectorAll('.vp-thumb').forEach(thumb => thumb.classList.remove('active'));
+  element.classList.add('active');
+}
+
+/* ==================== 6. GITHUB WORKSPACE OBSERVATORY ==================== */
+
+async function initGitHubDashboard() {
+  const repoCount = document.getElementById('github-repo-count');
+  const followers = document.getElementById('github-followers');
+  const avatar = document.getElementById('github-avatar');
+  const userId = document.getElementById('github-user-id');
+  const languagesChart = document.getElementById('github-languages-chart');
+  const reposContainer = document.getElementById('github-repos-container');
   
-  // Highlight active thumb
-  const thumbs = document.querySelectorAll('.viewpoint-thumb');
-  thumbs.forEach(t => t.classList.remove('active'));
-  thumbNode.classList.add('active');
-}
-
-// 2. Certificates Render
-function initCertViewToggles() {
-  const btnGrid = document.getElementById('btn-cert-grid');
-  const btnTimeline = document.getElementById('btn-cert-timeline');
-  const paneGrid = document.getElementById('explorer-certs-grid');
-  const paneTimeline = document.getElementById('explorer-certs-timeline');
-
-  btnGrid.addEventListener('click', () => {
-    btnGrid.classList.add('active');
-    btnTimeline.classList.remove('active');
-    paneGrid.style.display = 'grid';
-    paneTimeline.style.display = 'none';
-    certViewMode = 'grid';
-    filterArchiveData();
-  });
-
-  btnTimeline.addEventListener('click', () => {
-    btnTimeline.classList.add('active');
-    btnGrid.classList.remove('active');
-    paneTimeline.style.display = 'block';
-    paneGrid.style.display = 'none';
-    certViewMode = 'timeline';
-    filterArchiveData();
-  });
-}
-
-function renderArchiveCertificates(items) {
-  const grid = document.getElementById('explorer-certs-grid');
-  const timeline = document.getElementById('explorer-certs-timeline');
-
-  grid.innerHTML = '';
-  timeline.innerHTML = '';
-
-  if (items.length === 0) {
-    const errorHtml = `<div style="text-align:center; padding:40px 0; color:var(--text-secondary);">No qualifications match filters.</div>`;
-    grid.innerHTML = errorHtml;
-    timeline.innerHTML = errorHtml;
-    return;
-  }
-
-  items.forEach(cert => {
-    const pdfPath = `assets/certificates/${cert.fileName}`;
-    grid.innerHTML += `
-      <div class="certificate-card">
-        <span class="cert-issuer-badge">${cert.issuer} // ${cert.date}</span>
-        <h4>${cert.title}</h4>
-        <p class="cert-description">${cert.description}</p>
-        
-        <div class="vault-metadata-footer" style="border:none; padding-top:0; margin-bottom:12px; font-size:0.72rem;">
-          <div class="meta-row">
-            <span>Related:</span>
-            <span onclick="triggerCrossLink('${cert.relatedContent.link}')" class="crosslink-tag">${cert.relatedContent.text}</span>
-          </div>
-        </div>
-
-        <div class="cert-actions" style="margin-top:auto;">
-          <button onclick="openCertificateViewer('${pdfPath}', '${cert.title}')" class="btn-primary" style="padding:6px 12px; font-size:0.75rem; border-radius:6px; flex-grow:1;">
-            <span class="material-symbols-outlined" style="font-size:14px;">verified</span> Verify PDF
-          </button>
-        </div>
-      </div>
-    `;
-  });
-
-  const sortedCerts = [...items].sort((a, b) => new Date(b.date) - new Date(a.date));
-  sortedCerts.forEach(cert => {
-    const pdfPath = `assets/certificates/${cert.fileName}`;
-    timeline.innerHTML += `
-      <div class="cert-timeline-item">
-        <div class="cert-timeline-bullet"></div>
-        <div class="cert-timeline-date">${cert.date} // ${cert.issuer}</div>
-        <h4>${cert.title}</h4>
-        <div class="cert-timeline-meta">
-          <p>${cert.description}</p>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-            <span style="font-size:0.75rem;">Related: <strong class="crosslink-tag" onclick="triggerCrossLink('${cert.relatedContent.link}')">${cert.relatedContent.text}</strong></span>
-            <button onclick="openCertificateViewer('${pdfPath}', '${cert.title}')" class="btn-secondary" style="padding:4px 10px; font-size:0.7rem; border-radius:4px;">
-              <span class="material-symbols-outlined" style="font-size:12px;">open_in_new</span> Verify
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  });
-}
-
-// 3. Presentations Render
-function renderArchivePresentations(items) {
-  const grid = document.getElementById('explorer-presentations-grid');
-  grid.innerHTML = '';
-
-  if (items.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 0; color:var(--text-secondary);">No presentations match filters.</div>`;
-    return;
-  }
-
-  items.forEach(pres => {
-    let tagsHtml = '';
-    pres.tags.forEach(t => {
-      tagsHtml += `<span class="tech-tag">${t}</span>`;
-    });
-
-    const pptxPath = `assets/presentations/${pres.fileName}`;
-
-    grid.innerHTML += `
-      <div class="pres-card">
-        <div class="pres-cover-box">
-          <div class="pres-slides-badge">${pres.slidesCount} Slides</div>
-          <div class="pres-ext-badge">.PPTX</div>
-          <div class="pres-cover-title">${pres.title}</div>
-          <div class="pres-cover-badge">${pres.category}</div>
-        </div>
-        <div class="pres-info-box">
-          <h4>Technical Slide deck</h4>
-          <p>${pres.description}</p>
-          
-          <div class="pres-meta-footer">
-            <div class="meta-row" style="font-size:0.75rem; color:var(--text-secondary);">
-              <span>Date:</span>
-              <span>${pres.date}</span>
-            </div>
-            <div class="meta-row" style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:12px;">
-              <span>Related Project:</span>
-              <span onclick="triggerCrossLink('${pres.relatedContent.link}')" class="crosslink-tag">${pres.relatedContent.text}</span>
-            </div>
-            <div class="proj-modal-tech" style="margin-bottom:18px;">${tagsHtml}</div>
-            
-            <div class="pres-actions">
-              <button onclick="openPresentationPreview('${pres.id}')" class="btn-primary" style="padding:8px 14px; font-size:0.75rem; border-radius:6px; flex-grow:1;">
-                <span class="material-symbols-outlined" style="font-size:14px;">co_present</span> Preview Slides
-              </button>
-              <a href="${pptxPath}" download class="btn-secondary" style="padding:8px 14px; font-size:0.75rem; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">
-                <span class="material-symbols-outlined" style="font-size:14px;">download</span> Download
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function openPresentationPreview(presId) {
-  const pres = PROFILE_DATA.presentations.find(p => p.id === presId);
-  const modal = document.getElementById('presentation-preview-modal');
-  const content = document.getElementById('pres-modal-content');
-
-  let outlineHtml = '';
-  pres.slideOutlines.forEach(o => {
-    outlineHtml += `<div class="slide-outline-item">${o}</div>`;
-  });
-
-  const pdfFrameHtml = pres.pdfName ? `
-    <h4 class="section-subtitle" style="font-size:0.75rem; margin-top:24px; margin-bottom:12px;">Inline Slide Viewer</h4>
-    <div style="aspect-ratio:16/9; background:#0d121c; border:1px solid var(--border-color); border-radius:12px; overflow:hidden;">
-      <iframe src="assets/presentations/${pres.pdfName}#toolbar=0" width="100%" height="100%" frameborder="0"></iframe>
-    </div>
-  ` : `
-    <div class="info-widget" style="margin-top:20px;">
-      <span class="material-symbols-outlined text-gold">info</span>
-      <p>Inline slide previews require PDF conversion. Please click download to obtain the original PowerPoint deck: <strong>${pres.fileName}</strong></p>
-    </div>
-  `;
-
-  content.innerHTML = `
-    <span class="featured-cat-tag">${pres.category} // ${pres.slidesCount} Slides</span>
-    <h2>${pres.title}</h2>
-    <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px;">${pres.description}</p>
+  if (!repoCount || !followers || !avatar) return;
+  
+  const data = await fetchGitHubData();
+  if (!data) return;
+  
+  repoCount.textContent = data.profile.publicRepos;
+  followers.textContent = data.profile.followers;
+  avatar.src = data.profile.avatarUrl;
+  avatar.onerror = () => { avatar.src = 'assets/profile/portrait.jpg'; };
+  userId.innerHTML = `<a href="${data.profile.url}" target="_blank">github.com/Nandhu2036</a>`;
+  
+  // Render languages bar
+  languagesChart.innerHTML = '';
+  const colors = ['#2563EB', '#0EA5E9', '#10B981', '#F59E0B', '#8B5CF6'];
+  const langKeys = Object.keys(data.languages);
+  const totalCount = langKeys.reduce((acc, key) => acc + data.languages[key], 0);
+  
+  langKeys.forEach((key, index) => {
+    const count = data.languages[key];
+    const percent = (count / totalCount) * 100;
+    const color = colors[index % colors.length];
     
-    <h4 class="section-subtitle" style="font-size:0.75rem; margin-bottom:12px;">Slide outlines & Index Summary</h4>
-    <div class="slide-outline-list">
-      ${outlineHtml}
-    </div>
-
-    ${pdfFrameHtml}
-  `;
-
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-// 4. Documents Render
-function renderArchiveDocuments(items) {
-  const tbody = document.getElementById('explorer-documents-table');
-  tbody.innerHTML = '';
-
-  if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px 0; color:var(--text-secondary);">No documents match filters.</td></tr>`;
-    return;
-  }
-
-  items.forEach(doc => {
-    tbody.innerHTML += `
-      <tr>
-        <td>
-          <div class="doc-name-cell">
-            <span class="material-symbols-outlined">picture_as_pdf</span>
-            <div>
-              <span class="text-white" style="font-weight:600;">${doc.title}</span>
-              <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">
-                Related: <strong class="crosslink-tag" onclick="triggerCrossLink('${doc.relatedContent.link}')">${doc.relatedContent.text}</strong>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="doc-type-cell">${doc.software}</td>
-        <td><span class="vault-tag">${doc.type}</span></td>
-        <td class="doc-size-cell">${doc.fileSize}</td>
-        <td>
-          <button onclick="openCertificateViewer('${doc.filePath}', '${doc.title}')" class="btn-primary" style="padding: 6px 12px; font-size: 0.72rem; border-radius: 6px; margin-right:4px;">
-            <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span> Preview
-          </button>
-          <a href="${doc.filePath}" download class="btn-secondary" style="padding: 6px 12px; font-size: 0.72rem; border-radius: 6px; display:inline-flex; align-items:center; gap:4px;">
-            <span class="material-symbols-outlined" style="font-size: 14px;">download</span> Download
-          </a>
-        </td>
-      </tr>
+    languagesChart.innerHTML += `
+      <div class="git-lang-seg" style="width: ${percent}%; background-color: ${color};" title="${key}: ${percent.toFixed(1)}%"></div>
     `;
   });
-}
-
-// 5. Research Hub Render
-function renderArchiveResearch(items) {
-  const tbody = document.getElementById('explorer-research-table');
-  tbody.innerHTML = '';
-
-  if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px 0; color:var(--text-secondary);">No research papers match filters.</td></tr>`;
-    return;
-  }
-
-  items.forEach(res => {
-    tbody.innerHTML += `
-      <tr>
-        <td>
-          <div class="doc-name-cell">
-            <span class="material-symbols-outlined">description</span>
-            <div>
-              <span class="text-white" style="font-weight:600;">${res.title}</span>
-              <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">
-                Source: <strong>${res.source} // ${res.date}</strong>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td class="doc-type-cell">${res.software}</td>
-        <td class="doc-size-cell">${res.fileSize}</td>
-        <td>
-          <button onclick="openCertificateViewer('${res.filePath}', '${res.title}')" class="btn-primary" style="padding: 6px 12px; font-size: 0.72rem; border-radius: 6px; margin-right:4px;">
-            <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span> Open Paper
-          </button>
-          <a href="${res.filePath}" download class="btn-secondary" style="padding: 6px 12px; font-size: 0.72rem; border-radius: 6px; display:inline-flex; align-items:center; gap:4px;">
-            <span class="material-symbols-outlined" style="font-size: 14px;">download</span> PDF
-          </a>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-// Video section removed.
-
-/* ==================== 3. INTERCONNECTED NAVIGATION LOGIC ==================== */
-
-function triggerCrossLink(targetLink) {
-  const project = PROFILE_DATA.projects.find(p => p.id === targetLink);
-  if (project) {
-    openProjectModal(project);
-    return;
-  }
   
-  const anchor = document.getElementById(targetLink);
-  if (anchor) {
-    anchor.scrollIntoView({ behavior: 'smooth' });
-    anchor.classList.add('highlight-section-glow');
-    setTimeout(() => anchor.classList.remove('highlight-section-glow'), 1500);
-  }
+  // Render top 3 repositories list
+  reposContainer.innerHTML = '';
+  const topRepos = data.repos.slice(0, 3);
+  topRepos.forEach(repo => {
+    reposContainer.innerHTML += `
+      <a href="${repo.url}" target="_blank" class="git-repo-item">
+        <div>
+          <span class="git-repo-name">${repo.name}</span>
+          <p class="git-repo-desc" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${repo.description}</p>
+        </div>
+        <div class="git-repo-footer">
+          <span>● ${repo.language}</span>
+          <span>Updated: ${repo.updated}</span>
+        </div>
+      </a>
+    `;
+  });
 }
 
-function focusSkill(toolName) {
-  const skillSection = document.getElementById('skills');
-  if (skillSection) {
-    skillSection.scrollIntoView({ behavior: 'smooth' });
+/* ==================== 7. FORM SUBMISSION HANDLER ==================== */
+
+function initContactForm() {
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('form-status');
+  
+  if (!form || !status) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    status.className = "form-status";
+    status.style.display = 'block';
+    status.textContent = "Connecting to mail socket...";
     
     setTimeout(() => {
-      const tags = document.querySelectorAll('.skill-tag');
-      tags.forEach(tag => {
-        const nameText = tag.getAttribute('data-name');
-        if (nameText && nameText.toLowerCase().includes(toolName.toLowerCase())) {
-          tag.style.background = 'rgba(6, 182, 212, 0.2)';
-          tag.style.borderColor = 'var(--accent-primary)';
-          tag.style.transform = 'translateY(-4px) scale(1.05)';
-          tag.style.boxShadow = '0 0 15px rgba(6, 182, 212, 0.4)';
-          tag.style.transition = 'all 0.5s ease';
-          
-          setTimeout(() => {
-            tag.style.background = '';
-            tag.style.borderColor = '';
-            tag.style.transform = '';
-            tag.style.boxShadow = '';
-          }, 2500);
-        }
-      });
-    }, 800);
-  }
+      status.classList.add('success');
+      status.textContent = "Message transmitted successfully! Thank you for connecting, Nandha will get back to you shortly.";
+      form.reset();
+    }, 1000);
+  });
 }
 
-/* ==================== 4. FLOATING NAVIGATION CONTROLLERS ==================== */
+/* ==================== 8. FLOATING NAVBAR CONTROLLER ==================== */
 
 function initNavbarScroll() {
   const nav = document.getElementById('floating-navbar');
+  if (!nav) return;
   let lastScrollY = window.scrollY;
   
-  // Initial progress update
   updateScrollProgress();
   
   window.addEventListener('scroll', () => {
     updateScrollProgress();
     
     if (window.scrollY > lastScrollY && window.scrollY > 200) {
-      nav.classList.add('nav-hidden');
+      nav.style.transform = 'translateY(-100%)';
     } else {
-      nav.classList.remove('nav-hidden');
+      nav.style.transform = 'translateY(0)';
     }
     lastScrollY = window.scrollY;
     spyNavbarLinks();
@@ -1151,7 +1054,7 @@ function spyNavbarLinks() {
   
   let currentActive = '';
   sections.forEach(section => {
-    const sectionTop = section.offsetTop - 150;
+    const sectionTop = section.offsetTop - 120;
     if (window.scrollY >= sectionTop) {
       currentActive = section.getAttribute('id');
     }
@@ -1161,9 +1064,7 @@ function spyNavbarLinks() {
     link.classList.remove('active');
     
     let href = link.getAttribute('href');
-    if (currentActive === 'archive-explorer' && href === '#archive-explorer') {
-      link.classList.add('active');
-    } else if (href === `#${currentActive}`) {
+    if (href === `#${currentActive}`) {
       link.classList.add('active');
     }
   });
@@ -1173,6 +1074,7 @@ function initMobileMenu() {
   const toggle = document.getElementById('mobile-menu-toggle');
   const menu = document.getElementById('mobile-dropdown');
   const links = document.querySelectorAll('.mobile-link');
+  if (!toggle || !menu) return;
   
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1201,204 +1103,16 @@ function initMobileMenu() {
   });
 }
 
-/* ==================== 5. UNIVERSAL SEARCH ENGINE ==================== */
-
-function initUniversalSearch() {
-  const trigger = document.getElementById('search-trigger');
-  const overlay = document.getElementById('global-search-modal');
-  const closeBtn = document.getElementById('search-modal-close');
-  const searchInput = document.getElementById('global-search-input');
-  const resultsContainer = document.getElementById('search-results-container');
-  const feedback = document.getElementById('search-results-feedback');
-
-  trigger.addEventListener('click', openSearch);
-  
-  document.addEventListener('keydown', (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      openSearch();
-    }
-    
-    if (e.key === 'Escape' && overlay.classList.contains('active')) {
-      closeSearch();
-    }
-  });
-
-  closeBtn.addEventListener('click', closeSearch);
-  
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) closeSearch();
-  });
-
-  function openSearch() {
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => searchInput.focus(), 100);
-  }
-
-  function closeSearch() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-    searchInput.value = '';
-    resultsContainer.innerHTML = '';
-    feedback.style.display = 'block';
-  }
-
-  searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase().trim();
-    if (query.length < 2) {
-      resultsContainer.innerHTML = '';
-      feedback.style.display = 'block';
-      feedback.textContent = "Type at least 2 characters to search...";
-      return;
-    }
-    
-    feedback.style.display = 'none';
-    
-    const results = {
-      projects: PROFILE_DATA.projects.filter(p => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.technologies.some(t => t.toLowerCase().includes(query))),
-      certificates: PROFILE_DATA.certificates.filter(c => c.title.toLowerCase().includes(query) || c.issuer.toLowerCase().includes(query)),
-      skills: [],
-      internships: PROFILE_DATA.internships.filter(i => i.role.toLowerCase().includes(query) || i.company.toLowerCase().includes(query)),
-      documents: PROFILE_DATA.documents.filter(d => d.title.toLowerCase().includes(query) || d.description.toLowerCase().includes(query)),
-      cad: PROFILE_DATA.cadVault.filter(c => c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query)),
-      presentations: PROFILE_DATA.presentations.filter(p => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.tags.some(t => t.toLowerCase().includes(query))),
-      research: PROFILE_DATA.research.filter(r => r.title.toLowerCase().includes(query) || r.description.toLowerCase().includes(query) || r.tags.some(t => t.toLowerCase().includes(query)))
-    };
-
-    PROFILE_DATA.skills.forEach(cat => {
-      cat.list.forEach(skill => {
-        if (skill.name.toLowerCase().includes(query)) {
-          results.skills.push({ name: skill.name, category: cat.category });
-        }
-      });
-    });
-
-    renderSearchResults(results, query);
-  });
-}
-
-function renderSearchResults(results, query) {
-  const container = document.getElementById('search-results-container');
-  const feedback = document.getElementById('search-results-feedback');
-  container.innerHTML = '';
-  
-  let totalCount = 0;
-
-  // 1. Projects
-  if (results.projects.length > 0) {
-    totalCount += results.projects.length;
-    let group = `<div class="search-result-group"><h5>Projects (${results.projects.length})</h5>`;
-    results.projects.forEach(p => {
-      group += `<div class="search-result-item" onclick="selectSearchResult('project', '${p.id}')">
-        <span>${p.title}</span>
-        <span class="search-result-type-tag">Featured Work</span>
-      </div>`;
-    });
-    group += `</div>`;
-    container.innerHTML += group;
-  }
-
-  // 2. Presentations
-  if (results.presentations.length > 0) {
-    totalCount += results.presentations.length;
-    let group = `<div class="search-result-group"><h5>Presentations (${results.presentations.length})</h5>`;
-    results.presentations.forEach(p => {
-      group += `<div class="search-result-item" onclick="selectSearchResult('presentation', '${p.id}')">
-        <span>${p.title}</span>
-        <span class="search-result-type-tag">PowerPoint Deck</span>
-      </div>`;
-    });
-    group += `</div>`;
-    container.innerHTML += group;
-  }
-
-  // 3. Research Papers
-  if (results.research.length > 0) {
-    totalCount += results.research.length;
-    let group = `<div class="search-result-group"><h5>Research Papers (${results.research.length})</h5>`;
-    results.research.forEach(r => {
-      group += `<div class="search-result-item" onclick="selectSearchResult('cert', '${r.filePath}', '${r.title}')">
-        <span>${r.title}</span>
-        <span class="search-result-type-tag">${r.source}</span>
-      </div>`;
-    });
-    group += `</div>`;
-    container.innerHTML += group;
-  }
-
-  // 5. CAD Models
-  if (results.cad.length > 0) {
-    totalCount += results.cad.length;
-    let group = `<div class="search-result-group"><h5>CAD Designs (${results.cad.length})</h5>`;
-    results.cad.forEach(c => {
-      group += `<div class="search-result-item" onclick="selectSearchResult('cad', '${c.filePath}', '${c.title}')">
-        <span>${c.title}</span>
-        <span class="search-result-type-tag">${c.type}</span>
-      </div>`;
-    });
-    group += `</div>`;
-    container.innerHTML += group;
-  }
-
-  // 6. Certificates
-  if (results.certificates.length > 0) {
-    totalCount += results.certificates.length;
-    let group = `<div class="search-result-group"><h5>Credentials (${results.certificates.length})</h5>`;
-    results.certificates.forEach(c => {
-      const pdfPath = `assets/certificates/${c.fileName}`;
-      group += `<div class="search-result-item" onclick="selectSearchResult('cert', '${pdfPath}', '${c.title}')">
-        <span>${c.title}</span>
-        <span class="search-result-type-tag">${c.issuer}</span>
-      </div>`;
-    });
-    group += `</div>`;
-    container.innerHTML += group;
-  }
-
-  if (totalCount === 0) {
-    feedback.style.display = 'block';
-    feedback.textContent = `No elements matching "${query}" found.`;
-  }
-}
-
-function selectSearchResult(type, param1, param2, param3) {
-  document.getElementById('global-search-modal').classList.remove('active');
-  document.body.style.overflow = '';
-  
-  if (type === 'project') {
-    const project = PROFILE_DATA.projects.find(p => p.id === param1);
-    openProjectModal(project);
-  } else if (type === 'presentation') {
-    openPresentationPreview(param1);
-  } else if (type === 'cad') {
-    // Open in viewpoints drawer
-    const cadItem = PROFILE_DATA.cadVault.find(c => c.filePath === param1);
-    if (cadItem) {
-      openCADLightbox(cadItem.id);
-    } else {
-      openLightbox(param1, param2);
-    }
-  } else if (type === 'cert') {
-    openCertificateViewer(param1, param2);
-  } else {
-    const target = document.getElementById(type);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-}
-
-/* ==================== 6. MODAL & LIGHTBOX CONTROLLERS ==================== */
+/* ==================== 9. MODALS & LIGHTBOX CONTROLLERS ==================== */
 
 function initModals() {
-  const modals = ['archive-explorer-modal', 'project-detail-modal', 'cert-viewer-modal', 'lightbox-modal', 'timeline-detail-drawer', 'presentation-preview-modal'];
+  const modalIds = ['project-detail-modal', 'cert-viewer-modal', 'lightbox-modal'];
   
-  modals.forEach(modalId => {
+  modalIds.forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     
-    const closeBtn = modal.querySelector('.modal-close-btn') || modal.querySelector('.lightbox-close-btn') || modal.querySelector('.drawer-close-btn') || document.getElementById('pres-modal-close');
+    const closeBtn = modal.querySelector('.modal-close-btn') || modal.querySelector('.lightbox-close-btn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         closeSpecificModal(modal);
@@ -1416,6 +1130,12 @@ function initModals() {
 function closeSpecificModal(modal) {
   modal.classList.remove('active');
   document.body.style.overflow = '';
+  
+  // If it is the PDF viewer modal, clear the src to stop loading/playing
+  if (modal.id === 'cert-viewer-modal') {
+    const iframe = document.getElementById('cert-viewer-iframe');
+    if (iframe) iframe.src = '';
+  }
 }
 
 function openCertificateViewer(filePath, title) {
@@ -1424,6 +1144,7 @@ function openCertificateViewer(filePath, title) {
   const fallback = document.getElementById('cert-viewer-fallback');
   const downloadLink = document.getElementById('cert-download-link');
   const titleHeader = document.getElementById('cert-viewer-title');
+  if (!modal || !iframe || !titleHeader) return;
 
   titleHeader.textContent = title;
   iframe.style.display = 'block';
@@ -1444,6 +1165,7 @@ function openLightbox(filePath, captionText) {
   const modal = document.getElementById('lightbox-modal');
   const img = document.getElementById('lightbox-img');
   const caption = document.getElementById('lightbox-caption');
+  if (!modal || !img || !caption) return;
 
   img.src = filePath;
   caption.textContent = captionText;
@@ -1451,35 +1173,13 @@ function openLightbox(filePath, captionText) {
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
   
-  if (window.resetLightboxZoomPan) {
-    window.resetLightboxZoomPan();
-  }
+  zoomLevel = 1;
+  panX = 0;
+  panY = 0;
+  img.style.transform = `translate(0px, 0px) scale(1)`;
 }
 
-/* ==================== 7. FORM SUBMISSION HANDLER ==================== */
-
-function initContactForm() {
-  const form = document.getElementById('contact-form');
-  const status = document.getElementById('form-status');
-  
-  if (!form) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    status.className = "form-status-alert";
-    status.style.display = 'block';
-    status.textContent = "Connecting to mail server...";
-    
-    setTimeout(() => {
-      status.classList.add('success');
-      status.textContent = "Message transmitted successfully! Thank you for connecting, Nandha G will get back to you shortly.";
-      form.reset();
-    }, 1200);
-  });
-}
-
-/* ==================== 8. PREMIUM ZOOM-PAN & SEARCH KEYBOARD CONTROLS ==================== */
+/* ==================== 10. LIGHTBOX ZOOM-PAN MECHANISM ==================== */
 
 let zoomLevel = 1;
 let panX = 0;
@@ -1490,166 +1190,72 @@ let startY = 0;
 
 function initLightboxZoomPan() {
   const img = document.getElementById('lightbox-img');
-  if (!img) return;
+  const modal = document.getElementById('lightbox-modal');
+  if (!img || !modal) return;
 
-  function resetZoomPan() {
-    zoomLevel = 1;
-    panX = 0;
-    panY = 0;
-    applyTransform();
-  }
-
-  function applyTransform() {
-    img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
-    img.style.transition = isDragging ? 'none' : 'transform 0.15s ease-out';
-  }
-
-  // Wheel zoom
-  img.addEventListener('wheel', (e) => {
+  modal.addEventListener('wheel', (e) => {
     e.preventDefault();
-    const zoomFactor = 0.15;
+    const zoomFactor = 0.1;
     if (e.deltaY < 0) {
-      zoomLevel = Math.min(zoomLevel + zoomFactor, 5);
+      zoomLevel = Math.min(zoomLevel + zoomFactor, 3);
     } else {
       zoomLevel = Math.max(zoomLevel - zoomFactor, 0.8);
     }
     applyTransform();
-  });
+  }, { passive: false });
 
-  // Mouse pan
   img.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    isDragging = true;
-    startX = e.clientX - panX;
-    startY = e.clientY - panY;
-    img.style.cursor = 'grabbing';
+    if (zoomLevel > 1) {
+      isDragging = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+      img.style.cursor = 'grabbing';
+      e.preventDefault();
+    }
   });
 
   window.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    panX = e.clientX - startX;
-    panY = e.clientY - startY;
-    applyTransform();
+    if (isDragging) {
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      applyTransform();
+    }
   });
 
   window.addEventListener('mouseup', () => {
-    if (isDragging) {
-      isDragging = false;
-      img.style.cursor = 'grab';
-      applyTransform();
-    }
-  });
-
-  // Touch Support
-  let lastTouchX = 0;
-  let lastTouchY = 0;
-
-  img.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      isDragging = true;
-      lastTouchX = e.touches[0].clientX - panX;
-      lastTouchY = e.touches[0].clientY - panY;
-    }
-  });
-
-  img.addEventListener('touchmove', (e) => {
-    if (isDragging && e.touches.length === 1) {
-      e.preventDefault();
-      panX = e.touches[0].clientX - lastTouchX;
-      panY = e.touches[0].clientY - lastTouchY;
-      applyTransform();
-    }
-  });
-
-  img.addEventListener('touchend', () => {
     isDragging = false;
+    img.style.cursor = zoomLevel > 1 ? 'grab' : 'default';
   });
 
-  // Double click reset
-  img.addEventListener('dblclick', () => {
-    resetZoomPan();
-  });
-
-  window.resetLightboxZoomPan = resetZoomPan;
-}
-
-let currentSearchIndex = -1;
-
-function initSearchKeyboardNav() {
-  const input = document.getElementById('global-search-input');
-  const resultsContainer = document.getElementById('search-results-container');
-  if (!input || !resultsContainer) return;
-
-  input.addEventListener('keydown', (e) => {
-    const items = resultsContainer.querySelectorAll('.search-result-item');
-    if (items.length === 0) return;
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      currentSearchIndex = (currentSearchIndex + 1) % items.length;
-      highlightSearchItem(items);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      currentSearchIndex = (currentSearchIndex - 1 + items.length) % items.length;
-      highlightSearchItem(items);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (currentSearchIndex >= 0 && currentSearchIndex < items.length) {
-        items[currentSearchIndex].click();
-      }
-    }
-  });
-
-  input.addEventListener('input', () => {
-    currentSearchIndex = -1;
-  });
-}
-
-function highlightSearchItem(items) {
-  items.forEach((item, index) => {
-    if (index === currentSearchIndex) {
-      item.classList.add('active');
-      item.style.background = 'rgba(37, 99, 235, 0.1)';
-      item.style.borderColor = 'var(--accent-primary)';
-      item.scrollIntoView({ block: 'nearest' });
-    } else {
-      item.classList.remove('active');
-      item.style.background = '';
-      item.style.borderColor = '';
-    }
-  });
-}
-
-// Fallback upload handlers for missing internship documents
-window.triggerInternshipUpload = function(btn, company, type) {
-  const input = btn.nextElementSibling;
-  if (input) {
-    input.click();
+  function applyTransform() {
+    img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
   }
-};
+}
 
-window.handleInternshipUpload = function(event, company, type, input) {
-  const file = event.target.files[0];
-  if (!file) return;
+/* ==================== 11. MAGNETIC BUTTON MICRO-INTERACTIONS ==================== */
 
-  const fileUrl = URL.createObjectURL(file);
-  const btn = input.previousElementSibling;
-
-  if (btn) {
-    btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">visibility</span> View ${type === 'report' ? 'Report' : 'Certificate'}`;
-    btn.style.background = type === 'report' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.1)';
-    btn.style.borderColor = type === 'report' ? 'var(--accent-primary)' : 'var(--border-color)';
-    btn.style.color = 'var(--text-primary)';
-    btn.style.borderStyle = 'solid';
+function initMagneticButtons() {
+  const buttons = document.querySelectorAll('.magnetic-btn');
+  if (!buttons.length) return;
+  
+  buttons.forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const bound = btn.getBoundingClientRect();
+      const x = e.clientX - bound.left - bound.width / 2;
+      const y = e.clientY - bound.top - bound.height / 2;
+      
+      // Pull element towards mouse coordinates slightly
+      btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    });
     
-    btn.onclick = function() {
-      if (type === 'report') {
-        window.open(fileUrl, '_blank');
-      } else {
-        openCertificateViewer(fileUrl, `${company} Internship Cert`);
-      }
-    };
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'translate(0px, 0px)';
+    });
+  });
+}
 
-    alert(`File "${file.name}" uploaded successfully!\n\nDISCLAIMER: This uploaded file is temporarily stored in your browser session. To permanently deploy this report/certificate, add the file into the assets/ folder of your workspace and specify its relative path in data.js.`);
-  }
-};
+// Global hook references for inline HTML calls
+window.openCertificateViewer = openCertificateViewer;
+window.openLightbox = openLightbox;
+window.openCADLightbox = openCADLightbox;
+window.changeLightboxImage = changeLightboxImage;
