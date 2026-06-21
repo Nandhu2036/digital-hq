@@ -61,15 +61,20 @@ function init3DCanvas() {
   const ctx = canvas.getContext('2d');
   const label = document.getElementById('canvas-shape-label');
   
-  let width = canvas.width = canvas.offsetWidth;
-  let height = canvas.height = canvas.offsetHeight;
+  let width = canvas.width = canvas.offsetWidth || 300;
+  let height = canvas.height = canvas.offsetHeight || 300;
   
-  window.addEventListener('resize', () => {
-    if (canvas.offsetWidth > 0) {
+  function resizeCanvas() {
+    if (canvas.offsetWidth > 0 && (canvas.width !== canvas.offsetWidth || canvas.height !== canvas.offsetHeight)) {
       width = canvas.width = canvas.offsetWidth;
       height = canvas.height = canvas.offsetHeight;
     }
-  });
+  }
+  
+  window.addEventListener('resize', resizeCanvas);
+  for (let delay of [100, 300, 500, 1000, 2000]) {
+    setTimeout(resizeCanvas, delay);
+  }
 
   // Programmatic shape generators
   function generateGear() {
